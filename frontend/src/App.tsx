@@ -23,6 +23,7 @@ export const App: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ username: string; email: string } | null>(() => {
     return supabaseAuth.getCurrentUser();
   });
@@ -79,6 +80,13 @@ export const App: React.FC = () => {
     setCurrentUser(null);
     setCurrentMode('LANDING');
     setActiveNav('Dashboard');
+    setIsMobileSidebarOpen(false);
+  };
+
+  const handleNavSelect = (navItem: any) => {
+    setActiveNav(navItem);
+    setActiveModalFeature('NONE');
+    setIsMobileSidebarOpen(false);
   };
 
   // If in Public Landing Page Mode
@@ -105,17 +113,61 @@ export const App: React.FC = () => {
     );
   }
 
-  // Operator Console Mode
+  // Operator Console Mode (Smartphone & Desktop Optimized)
   return (
-    <div className="bg-[#131312] text-[#e5e2e0] h-screen w-screen flex overflow-hidden font-sans selection:bg-white/20 selection:text-white">
+    <div className="bg-[#131312] text-[#e5e2e0] h-screen w-screen flex flex-col lg:flex-row overflow-hidden font-sans selection:bg-white/20 selection:text-white relative">
       
-      {/* 1. LEFT SIDEBAR */}
-      <nav className="w-64 h-full bg-[#0e0e0d] border-r border-white/5 flex flex-col p-6 shrink-0 z-30 justify-between">
+      {/* 1. TOP MOBILE APP BAR (VISIBLE ONLY ON MOBILE/TABLET < LG) */}
+      <header className="lg:hidden h-14 bg-[#0e0e0d] border-b border-white/10 px-4 flex items-center justify-between shrink-0 z-40">
+        <div 
+          onClick={() => setCurrentMode('LANDING')}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <img src="/logo.svg" alt="Logo" className="w-6 h-6 object-contain filter invert" />
+          <span className="text-xs font-bold text-white uppercase tracking-wider font-sans">
+            ANVESHAKSUTRA SOC
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleNavSelect('Personal Safety')}
+            className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1"
+          >
+            <span className="material-symbols-outlined text-[16px]">health_and_safety</span>
+            <span>Easy</span>
+          </button>
+
+          <button
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            className="p-2 rounded-lg text-[#8e928e] hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              {isMobileSidebarOpen ? 'close' : 'menu'}
+            </span>
+          </button>
+        </div>
+      </header>
+
+      {/* MOBILE BACKDROP OVERLAY */}
+      {isMobileSidebarOpen && (
+        <div 
+          onClick={() => setIsMobileSidebarOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fadeIn"
+        />
+      )}
+
+      {/* 2. SIDEBAR NAVIGATION (COLLAPSIBLE ON MOBILE, FIXED ON DESKTOP) */}
+      <nav 
+        className={`w-64 h-full bg-[#0e0e0d] border-r border-white/5 flex flex-col p-5 shrink-0 z-50 justify-between fixed lg:relative inset-y-0 left-0 transition-transform duration-300 ${
+          isMobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
         <div>
           {/* Top Header with Emblem */}
           <div 
-            onClick={() => setCurrentMode('LANDING')}
-            className="mb-8 flex items-start gap-3 cursor-pointer group"
+            onClick={() => { setCurrentMode('LANDING'); setIsMobileSidebarOpen(false); }}
+            className="mb-6 flex items-start gap-3 cursor-pointer group"
             title="Return to Public Landing Page"
           >
             <img src="/logo.svg" alt="AnveshakSutra Emblem" className="w-7 h-7 object-contain mt-0.5 filter invert group-hover:scale-105 transition-transform" />
@@ -128,117 +180,117 @@ export const App: React.FC = () => {
           </div>
 
           {/* Navigation Items */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             {/* 0. Landing Page Return */}
             <button
-              onClick={() => setCurrentMode('LANDING')}
-              className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-lg text-xs font-medium text-[#8e928e] hover:text-white hover:bg-[#1c1c1a] transition-colors cursor-pointer mb-2"
+              onClick={() => { setCurrentMode('LANDING'); setIsMobileSidebarOpen(false); }}
+              className="w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium text-[#8e928e] hover:text-white hover:bg-[#1c1c1a] transition-colors cursor-pointer mb-1.5"
             >
               <span className="material-symbols-outlined text-[18px]">home</span>
               <span>Landing Page</span>
             </button>
 
-            {/* Simple Mode Switcher (Personal Safety Guard) */}
+            {/* Simple Mode Switcher */}
             <button
-              onClick={() => { setActiveNav('Personal Safety'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer mb-2 border ${
+              onClick={() => handleNavSelect('Personal Safety')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer mb-2 border ${
                 activeNav === 'Personal Safety'
-                  ? 'bg-emerald-500/20 text-emerald-300 font-semibold border-emerald-500/40 shadow-lg shadow-emerald-950/30'
+                  ? 'bg-emerald-500/20 text-emerald-300 font-semibold border-emerald-500/40 shadow-lg'
                   : 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">health_and_safety</span>
+              <span className="material-symbols-outlined text-[18px]">health_and_safety</span>
               <span>Personal Safety (Easy)</span>
             </button>
 
             {/* 1. Dashboard */}
             <button
-              onClick={() => { setActiveNav('Dashboard'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('Dashboard')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'Dashboard' && activeModalFeature === 'NONE'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">dashboard</span>
+              <span className="material-symbols-outlined text-[18px]">dashboard</span>
               <span>SOC Dashboard</span>
             </button>
 
             {/* 2. Threat Intelligence */}
             <button
-              onClick={() => { setActiveNav('Threat Intelligence'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('Threat Intelligence')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'Threat Intelligence'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">security</span>
-              <span>Threat Intelligence</span>
+              <span className="material-symbols-outlined text-[18px]">security</span>
+              <span>Threat Intel Radar</span>
             </button>
 
             {/* 3. Entity Mapping */}
             <button
-              onClick={() => { setActiveNav('Entity Mapping'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('Entity Mapping')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'Entity Mapping'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">hub</span>
-              <span>Entity Mapping</span>
+              <span className="material-symbols-outlined text-[18px]">hub</span>
+              <span>Entity Mapping 3D</span>
             </button>
 
             {/* 4. Canary Tokens */}
             <button
-              onClick={() => { setActiveNav('Canary Tokens'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('Canary Tokens')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'Canary Tokens'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">toll</span>
+              <span className="material-symbols-outlined text-[18px]">toll</span>
               <span>Canary Tokens</span>
             </button>
 
             {/* 5. OSINT Sweeps */}
             <button
-              onClick={() => { setActiveNav('OSINT Sweeps'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('OSINT Sweeps')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'OSINT Sweeps'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">radar</span>
+              <span className="material-symbols-outlined text-[18px]">radar</span>
               <span>OSINT Sweeps</span>
             </button>
 
             {/* 6. Settings */}
             <button
-              onClick={() => { setActiveNav('Settings'); setActiveModalFeature('NONE'); }}
-              className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              onClick={() => handleNavSelect('Settings')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 activeNav === 'Settings'
                   ? 'bg-[#2a2a29] text-white font-semibold'
                   : 'text-[#8e928e] hover:text-white hover:bg-[#1c1c1a]'
               }`}
             >
-              <span className="material-symbols-outlined text-[19px]">settings</span>
+              <span className="material-symbols-outlined text-[18px]">settings</span>
               <span>Settings</span>
             </button>
           </div>
         </div>
 
         {/* Bottom Sidebar Utility & Profile */}
-        <div className="space-y-4 pt-4 border-t border-white/5">
+        <div className="space-y-3 pt-3 border-t border-white/5">
           <div className="space-y-1">
             <button
-              onClick={() => setActiveNav('Report')}
+              onClick={() => handleNavSelect('Report')}
               className="w-full flex items-center gap-3 px-3 py-1.5 text-xs text-[#8e928e] hover:text-white hover:bg-[#1c1c1a] rounded-lg transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[17px]">description</span>
+              <span className="material-symbols-outlined text-[16px]">description</span>
               <span>Audit Report</span>
             </button>
             <a
@@ -247,30 +299,29 @@ export const App: React.FC = () => {
               rel="noreferrer"
               className="w-full flex items-center gap-3 px-3 py-1.5 text-xs text-[#8e928e] hover:text-white hover:bg-[#1c1c1a] rounded-lg transition-colors"
             >
-              <span className="material-symbols-outlined text-[17px]">help</span>
-              <span>Documentation</span>
+              <span className="material-symbols-outlined text-[16px]">help</span>
+              <span>Docs</span>
             </a>
           </div>
 
-          <div className="pt-2 flex items-center justify-between gap-3 border-t border-white/5">
+          <div className="pt-2 flex items-center justify-between gap-2 border-t border-white/5">
             <div 
-              onClick={() => setActiveNav('Profile')}
-              className={`flex items-center gap-2.5 truncate p-1.5 -ml-1.5 rounded-xl transition-all cursor-pointer flex-1 group ${
+              onClick={() => handleNavSelect('Profile')}
+              className={`flex items-center gap-2 truncate p-1.5 -ml-1 rounded-xl transition-all cursor-pointer flex-1 group ${
                 activeNav === 'Profile' ? 'bg-[#1c1c1a] border border-white/20' : 'hover:bg-[#1c1c1a]'
               }`}
-              title="Open Admin Profile & Security Settings"
             >
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5n_wplBG1hI-d0L2yPV4GBO7qNLtUl6G7CW3VNLHykvNYau8_uptSPqLUALOz-4qPFOruW3w5b2XNgFbCegBW7WjFaJjY9PpBTE-bz8uvAhgWi6AC2bWTk1B5GToKvy37xC0p8Oyhz1r9QQHrY5sNcBGgUQ3_bklD6ciP0gopiBKd6mR7MaBfk6GGz4o4Zq_AXs1VYC2gwalLpKwg7Rm9GTkBF4IBk1F5bCN10fR603nw722TCso0sLTN5uIEiaKG0VWkI6GYWZY"
                 alt="System Administrator"
-                className="w-8 h-8 rounded-full object-cover grayscale border border-white/10 shrink-0 group-hover:scale-105 transition-transform"
+                className="w-7 h-7 rounded-full object-cover grayscale border border-white/10 shrink-0"
               />
               <div className="flex flex-col truncate">
-                <span className="text-xs font-semibold text-white tracking-tight truncate group-hover:text-emerald-400 transition-colors">
+                <span className="text-xs font-semibold text-white tracking-tight truncate">
                   {currentUser?.username || 'admin'}
                 </span>
-                <span className="text-[10px] text-[#8e928e] font-mono truncate">
-                  {currentUser?.email || 'operator@anveshaksutra.internal'}
+                <span className="text-[9px] text-[#8e928e] font-mono truncate">
+                  {currentUser?.email || 'operator@corp'}
                 </span>
               </div>
             </div>
@@ -278,7 +329,7 @@ export const App: React.FC = () => {
             <button
               onClick={handleLogout}
               className="p-1.5 rounded-lg text-[#8e928e] hover:text-rose-400 hover:bg-rose-950/30 transition-colors cursor-pointer shrink-0"
-              title="Sign Out Operator"
+              title="Sign Out"
             >
               <span className="material-symbols-outlined text-[16px]">logout</span>
             </button>
@@ -286,19 +337,19 @@ export const App: React.FC = () => {
         </div>
       </nav>
 
-      {/* 2. MAIN CANVAS VIEW ROUTER */}
-      <main className="flex-1 h-full overflow-y-auto px-6 sm:px-10 md:px-14 lg:px-16 py-10 space-y-10 w-full">
+      {/* 3. MAIN CANVAS VIEW (FULL MOBILE SCROLL & DESKTOP FIT) */}
+      <main className="flex-1 h-full overflow-y-auto px-3 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-8 space-y-6 sm:space-y-8 w-full pb-20 lg:pb-8">
         
         {/* Dynamic Modal / Feature Overlay */}
         {activeModalFeature !== 'NONE' && (
-          <div className="p-6 rounded-2xl bg-[#1c1c1a] border border-white/10 relative space-y-4">
+          <div className="p-4 sm:p-6 rounded-2xl bg-[#1c1c1a] border border-white/10 relative space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-white/5">
               <span className="text-xs uppercase font-mono tracking-wider text-[#8e928e]">Interactive Tool</span>
               <button
                 onClick={() => setActiveModalFeature('NONE')}
                 className="text-xs text-white hover:text-rose-400 font-mono cursor-pointer"
               >
-                ✕ Close Workspace
+                ✕ Close
               </button>
             </div>
             {activeModalFeature === 'K_ANON' && <KAnonymityChecker />}
@@ -341,59 +392,57 @@ export const App: React.FC = () => {
         {/* View 0: Default Operator Console Dashboard */}
         {activeNav === 'Dashboard' && (
           <>
-            {/* Hero Section with Official Logo */}
-            <section className="space-y-3">
-              <div className="flex items-center gap-4">
-                <img src="/logo.svg" alt="AnveshakSutra" className="w-12 h-12 object-contain filter invert" />
-                <h1 className="text-5xl font-bold text-white tracking-tight font-sans">
-                  AnveshakSutra
+            {/* Hero Section */}
+            <section className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-3">
+                <img src="/logo.svg" alt="AnveshakSutra" className="w-9 h-9 sm:w-12 sm:h-12 object-contain filter invert" />
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight font-sans">
+                  AnveshakSutra SOC
                 </h1>
               </div>
-              <p className="text-2xl text-[#a8a89f] font-light">
+              <p className="text-sm sm:text-xl text-[#a8a89f] font-light">
                 Every leak leaves a clue. We find it.
               </p>
-              <div className="pt-3 flex items-center gap-3">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                 <button
                   onClick={handleSimulateLeak}
                   disabled={isSimulating}
-                  className="bg-white hover:bg-neutral-200 text-black text-[11px] font-bold uppercase tracking-widest py-3 px-6 rounded-full flex items-center gap-2 cursor-pointer shadow-md transition-colors disabled:opacity-50"
+                  className="bg-white hover:bg-neutral-200 text-black text-xs sm:text-[11px] font-bold uppercase tracking-widest py-3 px-6 rounded-xl sm:rounded-full flex items-center justify-center gap-2 cursor-pointer shadow-md transition-colors disabled:opacity-50"
                 >
                   <span>{isAttackActive ? 'RESET SIMULATOR' : 'SIMULATE REAL-TIME LEAK'}</span>
                   <span className="material-symbols-outlined text-[16px]">sensors</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveNav('Personal Safety')}
-                  className="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold uppercase tracking-widest py-3 px-6 rounded-full flex items-center gap-2 cursor-pointer shadow-md transition-colors"
+                  onClick={() => handleNavSelect('Personal Safety')}
+                  className="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs sm:text-[11px] font-bold uppercase tracking-widest py-3 px-6 rounded-xl sm:rounded-full flex items-center justify-center gap-2 cursor-pointer shadow-md transition-colors"
                 >
-                  <span>SWITCH TO SIMPLE PERSONAL SAFETY</span>
+                  <span>SWITCH TO PERSONAL SAFETY</span>
                   <span className="material-symbols-outlined text-[16px]">health_and_safety</span>
                 </button>
               </div>
             </section>
 
-            {/* Main 2-Card Layout (Digital Exposure Health + Cyber DNA Graph) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Main 2-Card Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
               
-              {/* Card 1: Digital Exposure Health (Col-8) */}
-              <div className="lg:col-span-8 bg-[#1c1c1a]/70 border border-white/5 rounded-2xl p-8 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
-
-                <div className="flex justify-between items-start mb-10 relative z-10">
+              {/* Card 1: Digital Exposure Health */}
+              <div className="lg:col-span-8 bg-[#1c1c1a]/70 border border-white/5 rounded-2xl p-5 sm:p-8 relative overflow-hidden group">
+                <div className="flex justify-between items-start mb-6 sm:mb-10 relative z-10">
                   <div>
-                    <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[#8e928e] mb-1.5">
+                    <h3 className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#8e928e] mb-1">
                       DIGITAL EXPOSURE HEALTH
                     </h3>
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${isAttackActive ? 'bg-rose-500 animate-ping' : 'bg-white animate-pulse'}`}></div>
-                      <span className="text-2xl font-medium text-white">
-                        {isAttackActive ? 'Critical Incident Detected' : '• All Protected'}
+                      <span className="text-lg sm:text-2xl font-medium text-white">
+                        {isAttackActive ? 'Critical Incident' : '• All Protected'}
                       </span>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-3xl font-light tracking-tight text-white font-mono">
+                    <span className="text-2xl sm:text-3xl font-light tracking-tight text-white font-mono">
                       {isAttackActive ? '01' : '00'}
                     </span>
                     <span className="text-xs text-[#8e928e] ml-1 font-mono">
@@ -402,35 +451,35 @@ export const App: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-5 relative z-10">
-                  <div className="flex justify-between items-center text-xs text-[#8e928e] pb-1 border-b border-white/5">
-                    <span>Active Digital Identities Monitored</span>
+                <div className="space-y-3 sm:space-y-4 relative z-10 text-xs">
+                  <div className="flex justify-between items-center text-[#8e928e] pb-1 border-b border-white/5">
+                    <span>Identities Monitored</span>
                     <span className="text-white font-medium font-mono">{telemetry.activeIdentities}</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-[#8e928e] pb-1 border-b border-white/5">
-                    <span>Critical Secrets / Key Findings</span>
+                  <div className="flex justify-between items-center text-[#8e928e] pb-1 border-b border-white/5">
+                    <span>Critical Secrets Exposed</span>
                     <span className={`font-medium font-mono ${isAttackActive ? 'text-rose-400 font-bold' : 'text-white'}`}>
-                      {isAttackActive ? '1 Active Leak (High Severity)' : `${telemetry.criticalExposures} Finding`}
+                      {isAttackActive ? '1 Active Leak' : `${telemetry.criticalExposures} Finding`}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-[#8e928e] pb-1 border-b border-white/5">
-                    <span>Active Honey-Token Canary Decoys</span>
+                  <div className="flex justify-between items-center text-[#8e928e] pb-1 border-b border-white/5">
+                    <span>Canary Tripwires</span>
                     <span className="text-emerald-400 font-medium font-mono">
                       {telemetry.activeCanaryTripwires} Armed
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-[#8e928e]">
-                    <span>Single Point of Failure (Betweenness SPOF)</span>
-                    <span className="text-white font-medium font-mono">{telemetry.betweennessSPOF}</span>
+                  <div className="flex justify-between items-center text-[#8e928e]">
+                    <span>Single Point of Failure</span>
+                    <span className="text-white font-medium font-mono truncate max-w-[160px] sm:max-w-none">{telemetry.betweennessSPOF}</span>
                   </div>
                 </div>
 
                 {isAttackActive && (
-                  <div className="mt-6 p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs font-mono text-rose-300 flex items-center justify-between">
-                    <span>⚠️ STAGING AWS SECRET EXPOSED IN PUBLIC REPO DIFF</span>
+                  <div className="mt-4 p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs font-mono text-rose-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span>⚠️ AWS STAGING SECRET LEAKED</span>
                     <button
                       onClick={() => setActiveModalFeature('DAMAGE_CONTROL')}
-                      className="px-3 py-1 bg-rose-500 text-white rounded font-bold hover:bg-rose-600 transition-colors"
+                      className="px-3 py-1 bg-rose-500 text-white rounded font-bold hover:bg-rose-600 transition-colors self-start sm:self-auto"
                     >
                       TAKE DAMAGE CONTROL
                     </button>
@@ -438,86 +487,123 @@ export const App: React.FC = () => {
                 )}
               </div>
 
-              {/* Card 2: Cyber DNA Quick Visualizer (Col-4) */}
-              <div className="lg:col-span-4 bg-[#1c1c1a]/70 border border-white/5 rounded-2xl p-8 flex flex-col justify-between group relative overflow-hidden">
-                <div className="space-y-4">
+              {/* Card 2: Cyber DNA Visualizer */}
+              <div className="lg:col-span-4 bg-[#1c1c1a]/70 border border-white/5 rounded-2xl p-5 sm:p-8 flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[#8e928e]">
+                    <h3 className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#8e928e]">
                       CYBER DNA™ TOPOLOGY
                     </h3>
-                    <span className="text-xs font-mono text-emerald-400">3D FORCE GRAPH</span>
+                    <span className="text-[10px] font-mono text-emerald-400">3D FORCE GRAPH</span>
                   </div>
 
-                  <div className="h-44 rounded-xl overflow-hidden border border-white/5 relative bg-black/40">
+                  <div className="h-36 sm:h-44 rounded-xl overflow-hidden border border-white/5 relative bg-black/40">
                     <CyberDnaVisualizer3D isAttackActive={isAttackActive} />
                   </div>
-
-                  <p className="text-xs text-[#8e928e] leading-relaxed">
-                    Dynamic graph neural topology mapping perimeter assets, lateral paths, and betweenness bottlenecks.
-                  </p>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <button
-                    onClick={() => setActiveNav('Entity Mapping')}
-                    className="text-xs text-white hover:text-emerald-400 font-semibold flex items-center gap-1 transition-colors"
-                  >
-                    <span>Full 3D Map View</span>
-                    <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleNavSelect('Entity Mapping')}
+                  className="text-xs text-white hover:text-emerald-400 font-semibold flex items-center justify-between pt-2 border-t border-white/5 transition-colors"
+                >
+                  <span>Open Full 3D Map</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
               </div>
             </div>
 
-            {/* Quick Action Dock */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {/* Quick Action Grid (2-Col on Mobile, 4-Col on Desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <button
                 onClick={() => setActiveModalFeature('K_ANON')}
-                className="p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-2 transition-all cursor-pointer group"
+                className="p-3.5 sm:p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-1.5 transition-all cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-[18px]">lock</span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/5 flex items-center justify-center text-white">
+                  <span className="material-symbols-outlined text-[16px] sm:text-[18px]">lock</span>
                 </div>
-                <div className="text-xs font-bold text-white">Zero-Knowledge Lookup</div>
-                <div className="text-[10px] text-[#8e928e]">Search breaches with 0 metadata leakage</div>
+                <div className="text-xs font-bold text-white">Zero-Knowledge</div>
+                <div className="text-[10px] text-[#8e928e] hidden sm:block">Search breaches privately</div>
               </button>
 
               <button
                 onClick={() => setActiveModalFeature('CANARY')}
-                className="p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-2 transition-all cursor-pointer group"
+                className="p-3.5 sm:p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-1.5 transition-all cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-[18px]">toll</span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/5 flex items-center justify-center text-white">
+                  <span className="material-symbols-outlined text-[16px] sm:text-[18px]">toll</span>
                 </div>
-                <div className="text-xs font-bold text-white">Plant Canary Decoy</div>
-                <div className="text-[10px] text-[#8e928e]">Generate 0-day tripwire tokens</div>
+                <div className="text-xs font-bold text-white">Plant Canary</div>
+                <div className="text-[10px] text-[#8e928e] hidden sm:block">Generate 0-day tripwires</div>
               </button>
 
               <button
                 onClick={() => setActiveModalFeature('DAMAGE_CONTROL')}
-                className="p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-2 transition-all cursor-pointer group"
+                className="p-3.5 sm:p-5 bg-[#1c1c1a] border border-white/5 hover:border-white/20 rounded-2xl text-left space-y-1.5 transition-all cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-[18px]">healing</span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/5 flex items-center justify-center text-white">
+                  <span className="material-symbols-outlined text-[16px] sm:text-[18px]">healing</span>
                 </div>
-                <div className="text-xs font-bold text-white">Damage Control &amp; Heal</div>
-                <div className="text-[10px] text-[#8e928e]">Active 401 probe verification</div>
+                <div className="text-xs font-bold text-white">Damage Control</div>
+                <div className="text-[10px] text-[#8e928e] hidden sm:block">401 probe verification</div>
               </button>
 
               <button
-                onClick={() => setActiveNav('Personal Safety')}
-                className="p-5 bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl text-left space-y-2 transition-all cursor-pointer group"
+                onClick={() => handleNavSelect('Personal Safety')}
+                className="p-3.5 sm:p-5 bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl text-left space-y-1.5 transition-all cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-[18px]">health_and_safety</span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <span className="material-symbols-outlined text-[16px] sm:text-[18px]">health_and_safety</span>
                 </div>
-                <div className="text-xs font-bold text-white">Personal Safety Guard</div>
-                <div className="text-[10px] text-emerald-400 font-medium">Simple 1-click everyday scan</div>
+                <div className="text-xs font-bold text-white">Personal Safety</div>
+                <div className="text-[10px] text-emerald-400 font-medium hidden sm:block">Simple 1-click scan</div>
               </button>
             </div>
           </>
         )}
       </main>
+
+      {/* 4. SMARTPHONE BOTTOM APP NAVIGATION BAR (MOBILE ONLY) */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-[#0e0e0d]/95 backdrop-blur-xl border-t border-white/10 px-2 py-1.5 z-40 flex items-center justify-around text-[10px] font-medium text-[#8e928e]">
+        <button
+          onClick={() => handleNavSelect('Dashboard')}
+          className={`flex flex-col items-center gap-0.5 p-1 ${activeNav === 'Dashboard' ? 'text-white font-bold' : ''}`}
+        >
+          <span className="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>SOC</span>
+        </button>
+
+        <button
+          onClick={() => handleNavSelect('Personal Safety')}
+          className={`flex flex-col items-center gap-0.5 p-1 ${activeNav === 'Personal Safety' ? 'text-emerald-400 font-bold' : ''}`}
+        >
+          <span className="material-symbols-outlined text-[18px]">health_and_safety</span>
+          <span>Personal</span>
+        </button>
+
+        <button
+          onClick={() => handleNavSelect('Threat Intelligence')}
+          className={`flex flex-col items-center gap-0.5 p-1 ${activeNav === 'Threat Intelligence' ? 'text-white font-bold' : ''}`}
+        >
+          <span className="material-symbols-outlined text-[18px]">security</span>
+          <span>Threats</span>
+        </button>
+
+        <button
+          onClick={() => handleNavSelect('Entity Mapping')}
+          className={`flex flex-col items-center gap-0.5 p-1 ${activeNav === 'Entity Mapping' ? 'text-white font-bold' : ''}`}
+        >
+          <span className="material-symbols-outlined text-[18px]">hub</span>
+          <span>Graph 3D</span>
+        </button>
+
+        <button
+          onClick={() => setIsMobileSidebarOpen(true)}
+          className="flex flex-col items-center gap-0.5 p-1 text-[#8e928e]"
+        >
+          <span className="material-symbols-outlined text-[18px]">more_horiz</span>
+          <span>Menu</span>
+        </button>
+      </nav>
     </div>
   );
 };

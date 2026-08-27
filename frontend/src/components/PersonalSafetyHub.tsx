@@ -110,7 +110,6 @@ export const PersonalSafetyHub: React.FC = () => {
     const clean = queryInput.trim().toLowerCase();
 
     try {
-      // 1. If Deep Dark Web Scan is active, call backend deep dark-web search engine
       if (deepDarkWebScan) {
         const deepRes = await apiClient.deepDarkWebSearch(clean, true);
         if (deepRes && deepRes.is_exposed && deepRes.findings && deepRes.findings.length > 0) {
@@ -126,7 +125,6 @@ export const PersonalSafetyHub: React.FC = () => {
         }
       }
 
-      // 2. Fallback / Standard Zero-Knowledge k-anonymity check
       const encoder = new TextEncoder();
       const data = encoder.encode(clean);
       const shaBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -230,30 +228,30 @@ export const PersonalSafetyHub: React.FC = () => {
   };
 
   return (
-    <div className="space-y-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn text-[#e5e2e0]">
+    <div className="space-y-8 sm:space-y-12 max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 animate-fadeIn text-[#e5e2e0]">
       {/* 1. Welcoming Hero Banner */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono font-semibold text-emerald-400">
+      <div className="text-center space-y-3 sm:space-y-4 max-w-3xl mx-auto px-2">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] sm:text-xs font-mono font-semibold text-emerald-400">
           <Globe className="w-3.5 h-3.5" />
           <span>Deep Dark Web, boAt 7.5M Leak &amp; Google Dark Web Index Active</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-sans">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-sans leading-tight">
           Check If Your Passwords, Phone, or Gmail Leaked
         </h1>
-        <p className="text-sm sm:text-base text-[#a8a89f] leading-relaxed">
+        <p className="text-xs sm:text-base text-[#a8a89f] leading-relaxed">
           Cross-checks your email, phone, and accounts against the boAt Lifestyle 7.5M data leak, Naz.API combolists, and Google Dark Web Report indexes with 100% Zero-Knowledge privacy.
         </p>
       </div>
 
       {/* 2. Main Easy Scanner Card */}
-      <div className="bg-[#1c1c1a] border border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 relative overflow-hidden">
-        {/* Category Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+      <div className="bg-[#1c1c1a] border border-white/15 rounded-2xl sm:rounded-3xl p-4 sm:p-10 shadow-2xl space-y-6 sm:space-y-8 relative overflow-hidden">
+        {/* Category Pills (Mobile Responsive 2x2 Grid or Row) */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-3">
           {[
-            { id: 'EMAIL', label: 'Email / Gmail Address', icon: <Mail className="w-4 h-4" /> },
-            { id: 'PHONE', label: 'Phone Number (SMS/WhatsApp)', icon: <Phone className="w-4 h-4" /> },
-            { id: 'INSTAGRAM', label: 'Instagram / Social Handle', icon: <Instagram className="w-4 h-4" /> },
-            { id: 'PASSWORD', label: 'Check a Password', icon: <Key className="w-4 h-4" /> },
+            { id: 'EMAIL', label: 'Email / Gmail', icon: <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> },
+            { id: 'PHONE', label: 'Phone (WhatsApp)', icon: <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> },
+            { id: 'INSTAGRAM', label: 'Instagram Handle', icon: <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> },
+            { id: 'PASSWORD', label: 'Check Password', icon: <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> },
           ].map((cat) => (
             <button
               key={cat.id}
@@ -268,21 +266,21 @@ export const PersonalSafetyHub: React.FC = () => {
                   details: 'Enter an identifier to check.',
                 });
               }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
+              className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 py-2.5 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
                 activeInputType === cat.id
-                  ? 'bg-white text-black font-bold border-white shadow-lg scale-105'
+                  ? 'bg-white text-black font-bold border-white shadow-lg'
                   : 'bg-[#131312] text-[#8e928e] border-white/10 hover:text-white hover:border-white/30'
               }`}
             >
               {cat.icon}
-              <span>{cat.label}</span>
+              <span className="truncate">{cat.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Big Search Input */}
-        <form onSubmit={handlePersonalScan} className="max-w-2xl mx-auto space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 bg-[#131312] border-2 border-white/20 hover:border-white/40 focus-within:border-emerald-400 p-2 rounded-2xl transition-all shadow-inner">
+        {/* Big Search Input (Mobile Optimized) */}
+        <form onSubmit={handlePersonalScan} className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row gap-2.5 bg-[#131312] border-2 border-white/20 hover:border-white/40 focus-within:border-emerald-400 p-1.5 sm:p-2 rounded-2xl transition-all shadow-inner">
             <input
               type="text"
               required
@@ -292,25 +290,25 @@ export const PersonalSafetyHub: React.FC = () => {
                 activeInputType === 'EMAIL'
                   ? 'Enter your email (e.g. alex.smith@gmail.com)...'
                   : activeInputType === 'PHONE'
-                  ? 'Enter phone with country code (e.g. +1 555 123 4567)...'
+                  ? 'Enter phone (e.g. +1 555 123 4567)...'
                   : activeInputType === 'INSTAGRAM'
-                  ? 'Enter your Instagram handle (e.g. @username)...'
-                  : 'Enter password to see if it is in breach databases...'
+                  ? 'Enter Instagram (e.g. @username)...'
+                  : 'Enter password to check...'
               }
-              className="flex-1 bg-transparent px-4 py-3 text-sm sm:text-base text-white placeholder-[#8e928e] focus:outline-none font-sans"
+              className="w-full bg-transparent px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-base text-white placeholder-[#8e928e] focus:outline-none font-sans"
             />
             <button
               type="submit"
               disabled={isScanning || !queryInput.trim()}
-              className="bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-bold px-8 py-3.5 rounded-xl text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0"
+              className="w-full sm:w-auto bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-bold px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0"
             >
-              {isScanning ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-              <span>{isScanning ? 'Searching Dark Web...' : 'Deep Safety Check'}</span>
+              {isScanning ? <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Search className="w-4 h-4 sm:w-5 sm:h-5" />}
+              <span>{isScanning ? 'Scanning...' : 'Deep Safety Check'}</span>
             </button>
           </div>
 
           {/* Deep Dark Web Checkbox */}
-          <div className="flex items-center justify-between gap-2 text-xs text-[#8e928e] bg-[#131312] p-3 rounded-xl border border-white/5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#8e928e] bg-[#131312] p-2.5 sm:p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -319,20 +317,20 @@ export const PersonalSafetyHub: React.FC = () => {
                 onChange={(e) => setDeepDarkWebScan(e.target.checked)}
                 className="rounded border-white/20 bg-black/40 text-emerald-500 focus:ring-0 cursor-pointer"
               />
-              <label htmlFor="deepScanToggle" className="cursor-pointer select-none text-white font-medium">
-                Deep Dark Web Scan (Includes boAt Lifestyle 7.5M Leak, Google Dark Web Report &amp; Infostealer Logs)
+              <label htmlFor="deepScanToggle" className="cursor-pointer select-none text-white text-[11px] sm:text-xs font-medium">
+                Deep Dark Web Scan (boAt 7.5M &amp; Google Dark Web Index)
               </label>
             </div>
-            <span className="text-[10px] font-mono text-emerald-400 hidden sm:inline">● ZERO-KNOWLEDGE RAM ENCRYPTED</span>
+            <span className="text-[10px] font-mono text-emerald-400">● 100% PRIVATE RAM ENCRYPTION</span>
           </div>
         </form>
 
         {/* Scan Results Card */}
         {scanResult.status !== 'IDLE' && (
-          <div className="space-y-6 max-w-3xl mx-auto animate-fadeIn">
+          <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto animate-fadeIn">
             {/* Header Score Card */}
             <div
-              className={`p-6 sm:p-8 rounded-2xl border transition-all ${
+              className={`p-4 sm:p-8 rounded-2xl border transition-all ${
                 scanResult.status === 'SAFE'
                   ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300 shadow-emerald-950/30'
                   : 'bg-rose-950/20 border-rose-500/40 text-rose-300 shadow-rose-950/30'
@@ -341,19 +339,19 @@ export const PersonalSafetyHub: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
                   {scanResult.status === 'SAFE' ? (
-                    <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0 mt-1" />
+                    <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400 shrink-0 mt-0.5" />
                   ) : (
-                    <AlertTriangle className="w-8 h-8 text-rose-400 shrink-0 mt-1" />
+                    <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-rose-400 shrink-0 mt-0.5" />
                   )}
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white font-sans">{scanResult.title}</h3>
-                    <p className="text-xs sm:text-sm text-neutral-300 mt-2 leading-relaxed">{scanResult.details}</p>
+                    <h3 className="text-lg sm:text-2xl font-bold text-white font-sans">{scanResult.title}</h3>
+                    <p className="text-xs sm:text-sm text-neutral-300 mt-1.5 leading-relaxed">{scanResult.details}</p>
                   </div>
                 </div>
 
-                <div className="bg-[#131312] border border-white/10 rounded-2xl p-4 text-center shrink-0 min-w-[120px]">
-                  <div className="text-[10px] uppercase tracking-widest text-[#8e928e] font-mono font-bold">SAFETY SCORE</div>
-                  <div className={`text-3xl font-extrabold mt-0.5 ${scanResult.status === 'SAFE' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <div className="bg-[#131312] border border-white/10 rounded-2xl p-3 sm:p-4 text-center shrink-0 min-w-[100px] sm:min-w-[120px] self-start sm:self-center">
+                  <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[#8e928e] font-mono font-bold">SAFETY SCORE</div>
+                  <div className={`text-2xl sm:text-3xl font-extrabold mt-0.5 ${scanResult.status === 'SAFE' ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {scanResult.score}/100
                   </div>
                 </div>
@@ -362,33 +360,33 @@ export const PersonalSafetyHub: React.FC = () => {
 
             {/* Individual Breach Finding Cards */}
             {allFindings.map((finding, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-[#131312] border border-rose-500/30 space-y-5 shadow-xl">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
+              <div key={idx} className="p-4 sm:p-6 rounded-2xl bg-[#131312] border border-rose-500/30 space-y-4 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400">
+                    <div className="w-8 h-8 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
                       {finding.breach_name.toLowerCase().includes('boat') ? <ShoppingBag className="w-4 h-4" /> : <ShieldAlert className="w-4 h-4" />}
                     </div>
                     <div>
-                      <h4 className="text-base font-bold text-white">{finding.breach_name}</h4>
-                      <p className="text-xs text-amber-300 font-mono">
-                        Timeline: <strong>{finding.breach_date}</strong> • Source: {finding.leak_source}
+                      <h4 className="text-sm sm:text-base font-bold text-white leading-tight">{finding.breach_name}</h4>
+                      <p className="text-[11px] sm:text-xs text-amber-300 font-mono mt-0.5">
+                        {finding.breach_date}
                       </p>
                     </div>
                   </div>
 
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 self-start sm:self-auto">
+                  <span className="px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 self-start sm:self-auto">
                     {finding.severity} RISK
                   </span>
                 </div>
 
                 {/* Compromised Fields */}
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-[#8e928e] uppercase">
-                    Compromised Data Categories in this Leak:
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-mono font-bold text-[#8e928e] uppercase">
+                    Compromised Categories:
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {finding.compromised_fields.map((field, fIdx) => (
-                      <span key={fIdx} className="px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg text-xs font-medium text-rose-300">
+                      <span key={fIdx} className="px-2.5 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg text-[11px] font-medium text-rose-300">
                         ⚠️ {field}
                       </span>
                     ))}
@@ -398,12 +396,12 @@ export const PersonalSafetyHub: React.FC = () => {
                 {/* Recommended Fixes */}
                 <div className="pt-2 border-t border-white/5 space-y-2">
                   <div className="text-xs font-mono font-bold text-emerald-400 uppercase flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Immediate Action Steps:</span>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Recommended Immediate Steps:</span>
                   </div>
-                  <ul className="space-y-1.5 text-xs sm:text-sm text-neutral-300">
+                  <ul className="space-y-1 text-xs text-neutral-300">
                     {finding.recommended_actions.map((act, aIdx) => (
-                      <li key={aIdx} className="flex items-start gap-2 bg-[#1c1c1a] p-2.5 rounded-xl border border-white/5">
+                      <li key={aIdx} className="flex items-start gap-2 bg-[#1c1c1a] p-2 sm:p-2.5 rounded-xl border border-white/5 leading-relaxed">
                         <ArrowRight className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{act}</span>
                       </li>
@@ -417,39 +415,39 @@ export const PersonalSafetyHub: React.FC = () => {
       </div>
 
       {/* 3. Everyday Security Tools */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Tool 1: 1-Click Strong Password Generator */}
-        <div className="bg-[#1c1c1a] border border-white/15 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl flex flex-col justify-between">
+        <div className="bg-[#1c1c1a] border border-white/15 rounded-2xl sm:rounded-3xl p-5 sm:p-8 space-y-4 sm:space-y-5 shadow-xl flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase">
               <Key className="w-4 h-4" />
               <span>Easy Security Tool</span>
             </div>
-            <h3 className="text-xl font-bold text-white font-sans">Instant Strong Password Generator</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-white font-sans">Instant Strong Password Generator</h3>
             <p className="text-xs sm:text-sm text-[#a8a89f] leading-relaxed">
-              Hackers use computers that guess millions of common passwords a second. Generate a random, unguessable password for your accounts in 1 click.
+              Hackers guess millions of passwords a second. Generate a random, uncrackable password for your accounts in 1 click.
             </p>
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-3 bg-[#131312] border border-white/10 rounded-2xl p-4">
-              <span className="font-mono text-sm sm:text-base text-emerald-400 font-bold select-all truncate">
-                {generatedPassword || 'Click "Create Strong Password" below'}
+            <div className="flex items-center justify-between gap-2 bg-[#131312] border border-white/10 rounded-2xl p-3 sm:p-4">
+              <span className="font-mono text-xs sm:text-base text-emerald-400 font-bold select-all truncate">
+                {generatedPassword || 'Click "Create Password" below'}
               </span>
               {generatedPassword && (
                 <button
                   onClick={copyPassword}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer shrink-0"
                 >
                   {copiedPass ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedPass ? 'COPIED!' : 'COPY'}</span>
+                  <span>{copiedPass ? 'COPIED' : 'COPY'}</span>
                 </button>
               )}
             </div>
 
             <button
               onClick={generateSafePassword}
-              className="w-full py-3.5 bg-white hover:bg-neutral-200 text-black font-bold rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-md"
+              className="w-full py-3 sm:py-3.5 bg-white hover:bg-neutral-200 text-black font-bold rounded-xl sm:rounded-2xl text-xs sm:text-sm uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-md"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Create Strong Password</span>
@@ -458,7 +456,7 @@ export const PersonalSafetyHub: React.FC = () => {
         </div>
 
         {/* Tool 2: Family & Loved Ones Watchlist */}
-        <div className="bg-[#1c1c1a] border border-white/15 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl flex flex-col justify-between">
+        <div className="bg-[#1c1c1a] border border-white/15 rounded-2xl sm:rounded-3xl p-5 sm:p-8 space-y-4 sm:space-y-5 shadow-xl flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-purple-400 uppercase">
@@ -470,31 +468,31 @@ export const PersonalSafetyHub: React.FC = () => {
                 className="flex items-center gap-1 text-xs font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Account</span>
+                <span>Add</span>
               </button>
             </div>
-            <h3 className="text-xl font-bold text-white font-sans">Family &amp; Accounts Watchlist</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-white font-sans">Family &amp; Accounts Watchlist</h3>
             <p className="text-xs sm:text-sm text-[#a8a89f] leading-relaxed">
-              Keep your parents, children, and personal devices safe by monitoring multiple accounts under one simple dashboard.
+              Keep your parents, children, and personal accounts safe by monitoring multiple targets under one simple dashboard.
             </p>
           </div>
 
-          <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-48 sm:max-h-56 overflow-y-auto pr-1">
             {watchlist.map((item) => (
-              <div key={item.id} className="p-3.5 bg-[#131312] border border-white/5 rounded-2xl flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white">
-                    {item.type === 'PHONE' ? <Phone className="w-4 h-4" /> : item.type === 'INSTAGRAM' ? <Instagram className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
+              <div key={item.id} className="p-3 bg-[#131312] border border-white/5 rounded-xl sm:rounded-2xl flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-white/5 flex items-center justify-center text-white shrink-0">
+                    {item.type === 'PHONE' ? <Phone className="w-3.5 h-3.5" /> : item.type === 'INSTAGRAM' ? <Instagram className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-white">{item.name}</h4>
-                    <p className="text-[11px] font-mono text-[#8e928e]">{item.target}</p>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
+                    <p className="text-[10px] sm:text-[11px] font-mono text-[#8e928e] truncate">{item.target}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    PROTECTED
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    SAFE
                   </span>
                   <button
                     onClick={() => setWatchlist(watchlist.filter((w) => w.id !== item.id))}
@@ -511,33 +509,33 @@ export const PersonalSafetyHub: React.FC = () => {
       </div>
 
       {/* 4. Plain-English AI Security Copilot Chat */}
-      <div className="bg-[#1c1c1a] border border-white/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-indigo-500 flex items-center justify-center text-black font-bold shadow-lg">
-              <MessageSquare className="w-5 h-5 text-white" />
+      <div className="bg-[#1c1c1a] border border-white/15 rounded-2xl sm:rounded-3xl p-4 sm:p-8 space-y-4 sm:space-y-6 shadow-2xl">
+        <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-500 to-indigo-500 flex items-center justify-center text-black font-bold shadow-lg shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white font-sans">Ask the Personal Safety Assistant</h3>
-              <p className="text-xs text-[#8e928e]">Ask any security question in everyday English — no confusing tech jargon!</p>
+              <h3 className="text-base sm:text-lg font-bold text-white font-sans">Ask Personal Safety Assistant</h3>
+              <p className="text-[11px] sm:text-xs text-[#8e928e]">Ask any security question in plain English!</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 w-fit">
+          <span className="text-[9px] sm:text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shrink-0">
             ● AI ONLINE
           </span>
         </div>
 
         {/* Chat History Box */}
-        <div className="space-y-3 max-h-72 overflow-y-auto p-4 bg-[#131312] border border-white/5 rounded-2xl">
+        <div className="space-y-2.5 max-h-60 sm:max-h-72 overflow-y-auto p-3 sm:p-4 bg-[#131312] border border-white/5 rounded-2xl">
           {chatMessages.map((msg, idx) => (
             <div
               key={idx}
-              className={`flex gap-3 text-xs sm:text-sm leading-relaxed ${
+              className={`flex gap-2 text-xs sm:text-sm leading-relaxed ${
                 msg.sender === 'USER' ? 'justify-end' : 'justify-start'
               }`}
             >
               <div
-                className={`max-w-xl p-3.5 rounded-2xl ${
+                className={`max-w-[85%] sm:max-w-xl p-3 sm:p-3.5 rounded-2xl ${
                   msg.sender === 'USER'
                     ? 'bg-white text-black font-medium rounded-tr-sm'
                     : 'bg-[#20201e] text-neutral-200 border border-white/10 rounded-tl-sm'
@@ -555,13 +553,13 @@ export const PersonalSafetyHub: React.FC = () => {
             type="text"
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
-            placeholder="Ask a question e.g. 'Was my email in the boAt data leak?'..."
-            className="flex-1 bg-[#131312] border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder-[#8e928e] focus:outline-none focus:border-white/30"
+            placeholder="Ask e.g. 'Was my email in the boAt data leak?'..."
+            className="flex-1 bg-[#131312] border border-white/10 rounded-xl sm:rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white placeholder-[#8e928e] focus:outline-none focus:border-white/30"
           />
           <button
             type="submit"
             disabled={!chatInput.trim()}
-            className="bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black px-5 py-3 rounded-2xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-md shrink-0"
+            className="bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-md shrink-0"
           >
             <span>Send</span>
             <Send className="w-3.5 h-3.5" />
@@ -572,45 +570,45 @@ export const PersonalSafetyHub: React.FC = () => {
       {/* Add Watchlist Modal */}
       {showAddWatchlist && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-          <div className="bg-[#1c1c1a] border border-white/20 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
-            <h3 className="text-xl font-bold text-white font-sans">Add Loved One or Account</h3>
-            <p className="text-xs text-[#8e928e]">We will monitor this account for leaks with zero-knowledge privacy.</p>
+          <div className="bg-[#1c1c1a] border border-white/20 rounded-3xl max-w-md w-full p-5 sm:p-8 space-y-4 sm:space-y-5 shadow-2xl relative">
+            <h3 className="text-lg sm:text-xl font-bold text-white font-sans">Add Account to Monitor</h3>
+            <p className="text-xs text-[#8e928e]">Monitored with zero-knowledge cryptographic privacy.</p>
 
-            <form onSubmit={handleAddWatchlist} className="space-y-4">
+            <form onSubmit={handleAddWatchlist} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-mono text-[#8e928e] uppercase mb-1">Friendly Name</label>
+                <label className="block text-[11px] font-mono text-[#8e928e] uppercase mb-1">Friendly Name</label>
                 <input
                   type="text"
                   required
                   value={newWatchName}
                   onChange={(e) => setNewWatchName(e.target.value)}
-                  placeholder="e.g. Dad's Work Email or Sister's Phone"
-                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
+                  placeholder="e.g. Dad's Work Email"
+                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8e928e] uppercase mb-1">Account Type</label>
+                <label className="block text-[11px] font-mono text-[#8e928e] uppercase mb-1">Account Type</label>
                 <select
                   value={newWatchType}
                   onChange={(e) => setNewWatchType(e.target.value as any)}
-                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
+                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
                 >
                   <option value="EMAIL">Email Address</option>
                   <option value="PHONE">Phone Number (WhatsApp / SMS)</option>
-                  <option value="INSTAGRAM">Instagram / Social Handle</option>
+                  <option value="INSTAGRAM">Instagram Handle</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8e928e] uppercase mb-1">Identifier</label>
+                <label className="block text-[11px] font-mono text-[#8e928e] uppercase mb-1">Identifier</label>
                 <input
                   type="text"
                   required
                   value={newWatchTarget}
                   onChange={(e) => setNewWatchTarget(e.target.value)}
                   placeholder="e.g. dad@email.com or +1 555 987 6543"
-                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
+                  className="w-full bg-[#131312] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/30"
                 />
               </div>
 
@@ -626,7 +624,7 @@ export const PersonalSafetyHub: React.FC = () => {
                   type="submit"
                   className="flex-1 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-black font-bold rounded-xl text-xs transition-colors cursor-pointer shadow-lg"
                 >
-                  Save to Watchlist
+                  Save Account
                 </button>
               </div>
             </form>
