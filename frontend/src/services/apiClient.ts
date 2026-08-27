@@ -256,6 +256,28 @@ class ApiClient {
   async resetSimulation(): Promise<{ status: string }> {
     return await this.request('/simulation/reset', { method: 'POST' });
   }
+
+  // 10. Autonomous Agentic AI & CyberDnaML
+  async runAutonomousTriage(target: string, secretSample: string = 'AKIA_LEAKED_SAMPLE', privilege: string = 'ADMIN'): Promise<any> {
+    return await this.request('/agent/run-autonomous-triage', {
+      method: 'POST',
+      body: JSON.stringify({ target, secret_sample: secretSample, privilege }),
+    });
+  }
+
+  async predictBlastRadius(nodeId: string, betweenness: number = 0.88, degree: number = 7, privilege: string = 'ADMIN', entropy: number = 4.2): Promise<any> {
+    return await this.request('/agent/predict-blast-radius', {
+      method: 'POST',
+      body: JSON.stringify({ node_id: nodeId, betweenness_centrality: betweenness, degree, privilege_level: privilege, secret_entropy: entropy }),
+    });
+  }
+
+  async analyzeEntropy(rawText: string): Promise<any> {
+    return await this.request('/agent/analyze-entropy', {
+      method: 'POST',
+      body: JSON.stringify({ raw_text: rawText }),
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

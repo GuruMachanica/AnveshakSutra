@@ -3,6 +3,8 @@ from httpx import AsyncClient, ASGITransport
 from app.main import app
 from app.services.ml_detector import calculate_shannon_entropy, classify_token_candidate
 from app.services.attack_simulation import simulate_lateral_attack_killchain
+from app.services.ml_prediction_service import CyberDnaML
+from app.services.agentic_service import SutraAgent
 
 def test_shannon_entropy_calculation():
     # Low entropy natural word
@@ -34,6 +36,29 @@ def test_killchain_simulation():
     assert len(res["kill_chain_stages"]) == 4
     assert res["blast_reduction_achieved"] == "94.2%"
 
+def test_cyber_dna_ml_blast_radius_prediction():
+    res = CyberDnaML.predict_topological_blast_radius(
+        node_id="admin@anveshaksutra.corp",
+        betweenness_centrality=0.88,
+        degree=7,
+        privilege_level="ADMIN",
+        secret_entropy=4.6
+    )
+    assert res["predicted_blast_radius_percentage"] >= 75.0
+    assert res["severity"] == "SEV-1 CRITICAL"
+    assert "betweenness_centrality_contribution" in res["feature_attributions"]
+
+def test_sutra_agent_autonomous_triage_loop():
+    incident = {
+        "target": "admin@anveshaksutra.corp",
+        "secret_sample": "AKIA_PROD_DEPLOYMENT_KEY_98124_XYZ",
+        "privilege": "ADMIN"
+    }
+    res = SutraAgent.run_autonomous_triage(incident)
+    assert res["status"] == "CONTAINED_BY_AGENT"
+    assert len(res["execution_trace"]) == 4
+    assert "deployed_canary" in res
+
 @pytest.mark.asyncio
 async def test_api_killchain_and_reports():
     transport = ASGITransport(app=app)
@@ -55,3 +80,13 @@ async def test_api_killchain_and_reports():
         assert res_rep.status_code == 200
         data_rep = res_rep.json()
         assert "cryptographic_integrity_seal" in data_rep
+
+        # 4. Autonomous Agent API
+        res_agent = await client.post("/api/v1/agent/run-autonomous-triage", json={
+            "target": "operator@anveshaksutra.corp",
+            "secret_sample": "AKIA_TEST_KEY_12345",
+            "privilege": "ADMIN"
+        })
+        assert res_agent.status_code == 200
+        data_agent = res_agent.json()
+        assert data_agent["status"] == "CONTAINED_BY_AGENT"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type NavItem = 'Dashboard' | 'Personal Safety' | 'Threat Intelligence' | 'Entity Mapping' | 'Canary Tokens' | 'OSINT Sweeps' | 'Settings' | 'Report' | 'Profile';
+export type NavItem = 'Dashboard' | 'Autonomous Agent' | 'Personal Safety' | 'Threat Intelligence' | 'Entity Mapping' | 'Canary Tokens' | 'OSINT Sweeps' | 'Settings' | 'Report' | 'Profile';
 
 interface ConsoleSidebarProps {
   activeNav: NavItem;
@@ -85,6 +85,18 @@ export const ConsoleSidebar: React.FC<ConsoleSidebarProps> = ({
             >
               <span className="material-symbols-outlined text-[18px]">dashboard</span>
               <span>SOC Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => onSelectNav('Autonomous Agent')}
+              className={`w-full flex items-center gap-3.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                activeNav === 'Autonomous Agent'
+                  ? 'bg-purple-950/40 text-purple-300 border border-purple-500/30 font-semibold shadow-md'
+                  : 'text-[#8e928e] hover:text-purple-400 hover:bg-[#1c1c1a]'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[18px]">smart_toy</span>
+              <span>Autonomous AI Agent</span>
             </button>
 
             <button

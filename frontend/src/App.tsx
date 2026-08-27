@@ -12,6 +12,7 @@ import { LandingPageView } from './components/LandingPageView';
 import { AuthModal } from './components/AuthModal';
 import { AdminProfileView } from './components/AdminProfileView';
 import { PersonalSafetyHub } from './components/PersonalSafetyHub';
+import { AutonomousAgentConsole } from './components/AutonomousAgentConsole';
 import { ConsoleSidebar, NavItem } from './components/layout/ConsoleSidebar';
 import { ConsoleMobileHeader } from './components/layout/ConsoleMobileHeader';
 import { ConsoleDashboard } from './components/layout/ConsoleDashboard';
@@ -164,6 +165,9 @@ export const App: React.FC = () => {
 
         {/* View: Personal Safety Hub (Simple Mode) */}
         {activeNav === 'Personal Safety' && <PersonalSafetyHub />}
+
+        {/* View: Autonomous AI Agent & ML Console */}
+        {activeNav === 'Autonomous Agent' && <AutonomousAgentConsole />}
 
         {/* View: Admin Profile */}
         {activeNav === 'Profile' && (

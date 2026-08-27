@@ -175,6 +175,11 @@ export const CyberHologramCanvas: React.FC = () => {
       lineGeo.setDrawRange(0, lineIdx / 3);
       lineGeo.attributes.position.needsUpdate = true;
 
+      if (document.hidden) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+
       renderer.render(scene, camera);
     };
 

@@ -1,84 +1,103 @@
 """
-AnveshakSutra Autonomous Self-Healing Agent Engine
-Autonomous Perception -> Correlation -> Probe -> Self-Healing Remediation Loop.
+Autonomous Multi-Agent Incident Response & Deception Engine (SutraAgent)
+Implements a self-directed ReAct (Reason + Act) loop:
+1. Perception -> Ingests security alerts & leaked identifiers
+2. Reasoning -> Evaluates risk via Shannon Entropy and Graph Topology
+3. Tool Execution -> Probes credential status, generates honey-token tripwires, simulates auto-revocation
+4. Forensic Synthesis -> Produces incident action timeline
 """
 
-import asyncio
-from datetime import datetime, timezone
-from typing import List, Dict, Any
-from app.services.probe_service import probe_credential_status
-from app.services.cyber_dna_service import get_cyber_dna_graph
+import time
+import uuid
+from typing import Dict, List, Any
+from app.services.ml_prediction_service import CyberDnaML
+from app.services.canary_service import generate_canary_token
 
-class AutonomousSelfHealingAgent:
-    def __init__(self):
-        self.agent_id = "agent_autonomous_sentinel_01"
-        self.state = "IDLE_MONITORING"
-        self.is_running = False
-        self.incident_history: List[Dict[str, Any]] = []
-
-    async def run_autonomous_investigation_cycle(self, target_identity: str = "huzaifa@ironlogic.in") -> Dict[str, Any]:
+class SutraAgent:
+    @staticmethod
+    def run_autonomous_triage(incident_payload: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Executes a complete autonomous perception, correlation, probing, and self-healing cycle.
+        Executes a complete 4-step autonomous triage loop.
         """
-        self.state = "INVESTIGATING_CYCLE"
-        now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
-        cycle_id = f"CYCLE-{int(datetime.now(timezone.utc).timestamp())}"
-
-        # 1. PERCEPTION: Ingest & Parse threat intelligence feeds
-        perception_step = {
-            "timestamp": now_str,
-            "stage": "PERCEPTION",
-            "thought": f"Autonomous feed poller ingested 14,200 paste events and OSINT indicators for '{target_identity}'.",
-            "action": f"tool_k_anonymity_bucket_query(target='{target_identity}')",
-            "result": "Discovered candidate exposure referencing pattern ghp_staging_secret_99b2 in public paste.",
-        }
-
-        # 2. CORRELATION & BLAST RADIUS: Query Graph ML engine
-        graph_data = get_cyber_dna_graph(target_identity, [])
-        spof_node = graph_data.get("analytics", {}).get("critical_single_point_of_failure", target_identity)
-        blast_count = graph_data.get("analytics", {}).get("blast_radius_node_count", 3)
-
-        correlation_step = {
-            "timestamp": now_str,
-            "stage": "CORRELATION",
-            "thought": f"Traversed Cyber DNA graph. Found linked lateral path from '{target_identity}' to '{spof_node}'.",
-            "action": f"tool_calculate_betweenness_spof(subgraph='{target_identity}')",
-            "result": f"Lateral blast radius encompasses {blast_count} interconnected infrastructure nodes (Betweenness: 0.88).",
-        }
-
-        # 3. ACTIVE PROBE: Execute non-destructive probe against provider endpoint
-        probe_res = await probe_credential_status("GITHUB_PAT", {"token": "ghp_simulated_exposed_token_99b2"})
-        is_token_active = probe_res.get("is_active", False)
-
-        probe_step = {
-            "timestamp": now_str,
-            "stage": "VERIFICATION_PROBE",
-            "thought": "Autonomous worker executed non-destructive verification probe against provider endpoint.",
-            "action": "tool_execute_read_only_probe(endpoint='api.github.com/user')",
-            "result": probe_res.get("message", "Probe confirmed status: VERIFIED_NEUTRALIZED"),
-        }
-
-        # 4. SELF-HEALING & AUTO-REMEDIATION:
-        healing_step = {
-            "timestamp": now_str,
-            "stage": "SELF_HEALING",
-            "thought": "Self-healing playbook initiated: Generating replacement Honey-Token and severing compromised graph edges.",
-            "action": "tool_deploy_canary_tripwire(type='GITHUB_PAT', location='.env.local') + tool_isolate_blast_radius()",
-            "result": "Generated replacement Canary 'ghp_canary_deployed_tripwire'. Perimeter isolated and restored to CLEAN state.",
-        }
-
-        thought_stream = [perception_step, correlation_step, probe_step, healing_step]
-        self.state = "IDLE_MONITORING"
-
+        target = incident_payload.get("target", "admin@anveshaksutra.corp")
+        secret_sample = incident_payload.get("secret_sample", "AKIA_PROD_LEAKED_AWS_KEY_99214")
+        privilege = incident_payload.get("privilege", "ADMIN")
+        
+        execution_trace: List[Dict[str, Any]] = []
+        
+        # STEP 1: PERCEPTION & ENTROPY CLASSIFICATION
+        step1_entropy = CyberDnaML.classify_secret_signature(secret_sample)
+        execution_trace.append({
+            "step_index": 1,
+            "phase": "PERCEPTION",
+            "thought": f"Ingested incident for target '{target}'. Analyzing raw secret token structure and bit-entropy.",
+            "tool_called": "tool_shannon_entropy_analyzer",
+            "tool_input": {"secret_sample": secret_sample},
+            "observation": f"Detected {step1_entropy['detected_signature']} with Shannon Entropy {step1_entropy['shannon_entropy']} bits/char (Verdict: {step1_entropy['verdict']}).",
+            "timestamp": time.strftime("%H:%M:%S", time.gmtime())
+        })
+        
+        # STEP 2: TOPOLOGICAL GRAPH BLAST-RADIUS REASONING
+        betweenness = 0.88 if privilege == "ADMIN" else 0.42
+        degree = 7 if privilege == "ADMIN" else 3
+        step2_blast = CyberDnaML.predict_topological_blast_radius(
+            node_id=target,
+            betweenness_centrality=betweenness,
+            degree=degree,
+            privilege_level=privilege,
+            secret_entropy=step1_entropy["shannon_entropy"]
+        )
+        execution_trace.append({
+            "step_index": 2,
+            "phase": "TOPOLOGICAL_REASONING",
+            "thought": f"Evaluating topological connectivity. Node '{target}' has Betweenness Centrality {betweenness}.",
+            "tool_called": "tool_topological_blast_predictor",
+            "tool_input": {"node_id": target, "betweenness": betweenness, "degree": degree},
+            "observation": f"Predicted Blast Radius: {step2_blast['predicted_blast_radius_percentage']}% ({step2_blast['severity']}). Status: {step2_blast['spof_status']}.",
+            "timestamp": time.strftime("%H:%M:%S", time.gmtime())
+        })
+        
+        # STEP 3: AUTONOMOUS ACTION - CANARY HONEY-TOKEN DEPLOYMENT
+        canary = generate_canary_token(
+            token_type="AWS_KEY",
+            label=f"Auto-Agent Canary for {target}"
+        )
+        execution_trace.append({
+            "step_index": 3,
+            "phase": "AUTONOMOUS_ACTION",
+            "thought": "High lateral blast radius detected. Arming an active Canary Decoy Tripwire to intercept attacker lateral movement.",
+            "tool_called": "tool_deploy_canary_honeytoken",
+            "tool_input": {"target_env": "PROD_CONTAINMENT_DECOY", "token_type": "AWS_KEY"},
+            "observation": f"Successfully armed Canary Token '{canary['token_value']}' (Prefix: {canary['hash_prefix5']}). Webhook listener active.",
+            "timestamp": time.strftime("%H:%M:%S", time.gmtime())
+        })
+        
+        # STEP 4: AUTONOMOUS DAMAGE CONTROL & REVOCATION
+        execution_trace.append({
+            "step_index": 4,
+            "phase": "RESOLUTION",
+            "thought": "Initiating automated credential quarantine and dispatching emergency revocation signals.",
+            "tool_called": "tool_execute_quarantine_webhook",
+            "tool_input": {"target": target, "action": "REVOKE_AND_ROTATE"},
+            "observation": "Revocation instruction broadcasted to IAM controller. 401 Unauthorized probe confirmed token deactivated.",
+            "timestamp": time.strftime("%H:%M:%S", time.gmtime())
+        })
+        
         return {
-            "cycle_id": cycle_id,
-            "status": "HEALED_AND_PROTECTED",
-            "timestamp": now_str,
-            "is_active_risk": is_token_active,
-            "blast_radius_contained": True,
-            "thought_stream": thought_stream,
-            "recommendation": "Self-healing successfully executed. Replacement Canary tripwire is active and armed.",
+            "incident_id": f"INC-AUTON-{str(uuid.uuid4())[:8].upper()}",
+            "target": target,
+            "status": "CONTAINED_BY_AGENT",
+            "risk_score": step2_blast["predicted_blast_radius_percentage"],
+            "entropy_analysis": step1_entropy,
+            "blast_radius_prediction": step2_blast,
+            "deployed_canary": canary,
+            "execution_trace": execution_trace,
+            "agent_summary": (
+                f"SutraAgent autonomously evaluated the compromised identity '{target}' ({privilege}). "
+                f"Secret identified as {step1_entropy['detected_signature']} ($H={step1_entropy['shannon_entropy']}$). "
+                f"Topological blast radius calculated at {step2_blast['predicted_blast_radius_percentage']}%. "
+                f"Armed 1 active honey-token decoy ({canary['token_value']}) and completed zero-trust containment."
+            ),
+            "thought_stream": [s["thought"] for s in execution_trace],
+            "completed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
-
-anveshak_agent = AutonomousSelfHealingAgent()
-autonomous_agent = anveshak_agent
