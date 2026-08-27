@@ -17,6 +17,7 @@ class BlastRadiusRequest(BaseModel):
     degree: int = 7
     privilege_level: str = "ADMIN"
     secret_entropy: Optional[float] = 4.2
+    clustering_coefficient: Optional[float] = 0.45
 
 class EntropyRequest(BaseModel):
     raw_text: str
@@ -51,7 +52,8 @@ def predict_blast_radius_endpoint(req: BlastRadiusRequest):
         betweenness_centrality=req.betweenness_centrality,
         degree=req.degree,
         privilege_level=req.privilege_level,
-        secret_entropy=req.secret_entropy or 4.2
+        secret_entropy=req.secret_entropy or 4.2,
+        clustering_coefficient=req.clustering_coefficient or 0.45
     )
 
 @router.post("/analyze-entropy")
