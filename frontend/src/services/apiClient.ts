@@ -223,9 +223,16 @@ class ApiClient {
     });
   }
 
-  // 6. Zero-Knowledge k-Anonymity Lookup
+  // 6. Zero-Knowledge k-Anonymity & Deep Dark Web Lookup
   async lookupKAnonymityPrefix(prefix5: string): Promise<any> {
     return await this.request<any>(`/identities/k-lookup/${prefix5.toLowerCase()}`);
+  }
+
+  async deepDarkWebSearch(query: string, deepScan: boolean = true): Promise<any> {
+    return await this.request<any>('/identities/deep-dark-web-search', {
+      method: 'POST',
+      body: JSON.stringify({ query, deep_scan: deepScan }),
+    });
   }
 
   // 7. Active Verification Probes

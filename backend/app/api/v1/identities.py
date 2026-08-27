@@ -1,15 +1,23 @@
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from typing import List, Optional
-from app.services.k_anonymity_service import get_k_anonymity_bucket, register_breach_hash_to_bucket
+from typing import List, Optional, Dict, Any
+from app.services.k_anonymity_service import (
+    get_k_anonymity_bucket, 
+    register_breach_hash_to_bucket,
+    perform_deep_dark_web_search
+)
 
 router = APIRouter()
 
 class IdentityCreate(BaseModel):
-    identity_type: str  # EMAIL, USERNAME, DOMAIN, GITHUB
+    identity_type: str  # EMAIL, USERNAME, DOMAIN, GITHUB, PHONE
     hash_prefix5: str   # First 5 chars of SHA-256
     blinded_hash: str   # Full salted hash
     encrypted_identifier: str  # AES-256-GCM ciphertext
+
+class DeepSearchRequest(BaseModel):
+    query: str
+    deep_scan: bool = True
 
 class IdentityResponse(BaseModel):
     id: str
@@ -60,3 +68,15 @@ async def k_anonymity_lookup(prefix5: str):
         "candidate_count": len(bucket),
         "candidates": bucket
     }
+
+@router.post("/deep-dark-web-search", summary="Execute Deep Dark Web & Stealer Log Search")
+async def deep_dark_web_search(payload: DeepSearchRequest):
+    """
+    Deep Dark Web Search Endpoint:
+    Cross-indexes the query against Google Dark Web Report catalogs,
+    RedLine/Lumma/Vidar infostealer malware logs, and massive historical combolists (Naz.API, COMB).
+    """
+    if not payload.query or len(payload.query.strip()) < 3:
+        raise HTTPException(status_code=400, detail="Search query must contain at least 3 characters.")
+        
+    return await perform_deep_dark_web_search(raw_query=payload.query, deep_scan=payload.deep_scan)
