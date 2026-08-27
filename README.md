@@ -1,4 +1,4 @@
-# AnveshakSutra — Autonomous Zero-Knowledge Exposure Monitor & 3D Graph ML Blast Radius Analyzer
+# AnveshakSutra (अन्वेषकसूत्र) — Autonomous Zero-Knowledge Exposure Intelligence, Multi-Agent AI & 3D Graph ML Blast Radius Analyzer
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-141414?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Three.js](https://img.shields.io/badge/Three.js-r162+-141414?style=for-the-badge&logo=threedotjs&logoColor=white)](https://threejs.org/)
@@ -7,62 +7,102 @@
 [![Docker](https://img.shields.io/badge/Docker-Enabled-141414?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-Proprietary-141414?style=for-the-badge)](LICENSE)
 
-**AnveshakSutra** (अन्वेषकसूत्र) is an enterprise-grade cyber intelligence and breach blast radius containment ecosystem. Engineered for individual researchers, student developers, and security operators, it continuously maps compromised credentials, detects unauthorized token scraping via decoy canary tripwires, and models lateral attack surfaces using 3D Graph Machine Learning with mathematical Zero-Knowledge privacy guarantees.
+**AnveshakSutra** (अन्वेषकसूत्र) is an enterprise-grade cyber intelligence and breach blast radius containment platform. It bridges the gap between everyday digital safety for families and mathematical, defense-grade threat intelligence for SOC security engineers.
 
 * **Live Web Studio:** [https://anveshak-sutra.vercel.app/](https://anveshak-sutra.vercel.app/)
-* **Backend API Gateway:** [https://anveshaksutra.onrender.com/health](https://anveshaksutra.onrender.com/health)
-* **Interactive Swagger API Docs:** [https://anveshaksutra.onrender.com/api/v1/docs](https://anveshaksutra.onrender.com/api/v1/docs)
-* **Developer CLI Tool (`anveshak`):** [`cli/`](cli/)
-* **Documentation Hub:** [`docs/`](docs/)
+* **Backend API Gateway:** `http://127.0.0.1:8000/api/v1`
+* **Interactive Swagger API Docs:** `http://127.0.0.1:8000/api/v1/docs`
+* **Developer CLI Hub (`anveshak`):** [`cli/`](cli/) | [Direct Website Downloads](frontend/public/downloads/)
 * **Repository:** [https://github.com/GuruMachanica/AnveshakSutra](https://github.com/GuruMachanica/AnveshakSutra)
 
 ---
 
-## 📦 Developer CLI (`anveshak`) & Autonomous Self-Healing
+## 🌟 Core Feature Highlights
 
-Scan local code repositories, verify credentials via zero-knowledge lookups, auto-heal exposed secrets with Canary tripwires, and generate tamper-proof forensic audit reports:
+### 1. 🛡️ Personal Safety Guard (Easy Mode for Families & Individuals)
+* **Multi-Breach Deep Dark Web Scanner**: 100% Zero-Knowledge scanning across **3.28B+ records**, including the **boAt Lifestyle 7.5M Customer PII Leak (April 2024)**, **Google Dark Web Report / Naz.API 70.8M stealer combolists**, RedLine/Lumma malware logs, and COMB archives.
+* **100% Free & Open APIs ($0 Cost)**: Live integration with **XposedOrNot Open API** and **Cloudflare Pwned Passwords $k$-Anonymity range queries** with zero API keys required.
+* **Plain-English Action Plans**: Step-by-step remediation guides for SMS courier scam alerts, India Post phishing warnings, and SIM-swap locks.
+* **1-Click Strong Password Generator**: Creates random 16-character uncrackable passphrases with one-tap clipboard copy.
+* **Family & Multi-Account Watchlist**: Monitor parents, children, and personal emails/phones in a single dashboard.
+* **AI Security Copilot**: Plain-English conversational assistant answering questions about leaks, OTP scams, and password protection.
+
+---
+
+### 2. 🤖 Autonomous Agentic AI (`SutraAgent v2.0`)
+Self-directed ReAct (Reason + Act) incident response engine:
+* **Phase 1 (Perception):** Ingests compromised identities and classifies token signatures using Shannon entropy $H(X)$.
+* **Phase 2 (Topological Reasoning):** Evaluates Betweenness Centrality impact on graph lateral propagation.
+* **Phase 3 (Autonomous Action - Deception):** Automatically generates and arms canary honey-token decoys (`AKIA_CANARY_...`).
+* **Phase 4 (Resolution):** Dispatches automated credential quarantine webhooks and verifies token deactivation via HTTP 401 probes.
+* **Live Streaming Console (`AutonomousAgentConsole.tsx`):** Real-time interactive timeline showing `[Thinking] -> [Tool Call] -> [Observation] -> [Containment]`.
+
+---
+
+### 3. 🧠 Graph Machine Learning & Blast Predictor (`CyberDnaML v2.0`)
+* **Non-Linear Sigmoidal GNN Blast Predictor:**
+  $$\text{Logit}(v) = 0.38 \cdot C_B(v) + 0.24 \cdot \text{Deg}(v) + 0.18 \cdot H(X) + 0.20 \cdot \text{Priv} - 0.10 \cdot C(v)$$
+  $$\text{BlastRadius}(v) = \frac{100}{1 + e^{-6.0 \cdot (\text{Logit}(v) - 0.45)}}$$
+* **1,000-Iteration Monte Carlo Percolation Simulation:** Evaluates stochastic compromise probabilities across Cloud IAM Root, Production PostgreSQL Databases, Secret Stores, and Kubernetes Clusters.
+* **Game-Theoretic SHAP Attributions:** Calculates exact percentage contributions of Betweenness Centrality, Degree, Shannon Entropy, and Privilege Level.
+* **1-Click "Sever Attack Bridge" Simulator:** Simulates zero-trust micro-segmentation to collapse blast radius from **86.3% down to 15.8%** ($81.7\%$ reduction).
+
+---
+
+### 4. 📦 Developer CLI (`anveshak`) & 1-Line Installers
+Install the CLI directly from your terminal or download standalone binaries from the website:
 
 ```bash
-# 1. Install CLI
+# 1-Line Installer (Linux / macOS)
+curl -fsSL https://raw.githubusercontent.com/GuruMachanica/AnveshakSutra/main/frontend/public/downloads/install.sh | bash
+
+# 1-Line Installer (Windows PowerShell)
+irm https://raw.githubusercontent.com/GuruMachanica/AnveshakSutra/main/frontend/public/downloads/install.ps1 | iex
+
+# Or install locally
 cd cli
 pip install -e .
+```
 
-# 2. Autonomous Self-Healing: Replaces exposed secrets with Canary Honey-Tokens
+#### CLI Command Suite:
+```bash
+# 1. Autonomous Self-Healing: Replaces exposed secrets with Canary Honey-Tokens
 anveshak heal .
 
-# 3. Live Sentinel Watcher: Real-time file monitoring daemon
+# 2. Live Sentinel Watcher: Real-time file monitoring daemon
 anveshak watch . --interval 3
 
-# 4. Shannon Entropy ML Scan: Detects unformatted high-entropy keys (H >= 3.85)
+# 3. Shannon Entropy ML Scan: Detects unformatted high-entropy keys (H >= 3.85)
 anveshak entropy path/to/file.py
 
-# 5. Cryptographically Sealed Forensic Report (SHA-256)
+# 4. Cryptographically Sealed Forensic Report (SHA-256)
 anveshak report .
 
-# 6. Zero-Knowledge Breach Check (5-character SHA-256 prefix)
-anveshak check developer@company.com
+# 5. Zero-Knowledge Breach Check (5-character SHA-256 prefix)
+anveshak check user@company.com
 
-# 7. Generate Honey-Token Tripwire
-anveshak canary --type github --memo "Staging Backend Decoy"
+# 6. Generate Honey-Token Tripwire
+anveshak canary --type aws --memo "Production Staging Decoy"
 ```
 
 ---
 
-## Key Capabilities
-
-* **Autonomous Self-Healing Sentinel**: Scans codebases, executes non-destructive verification challenges, and automatically replaces compromised secrets with armed Canary Honey-Tokens in place.
-* **Shannon Entropy & ML Secret Classifier**: Computes information entropy $H(X) = -\sum p(x) \log_2 p(x)$ to reliably isolate unformatted cryptographic keys ($H \ge 3.85$) from benign code.
-* **Temporal Kill-Chain Lateral Attack Path Simulator**: Simulates multi-stage adversarial movements (Foothold $\to$ Escalation $\to$ Pivoting $\to$ Exfiltration) across 3D Cyber DNA topologies with automated lateral edge severing.
-* **Cryptographically Sealed Forensic Incident Reporting**: Generates audit-grade Markdown/JSON incident disclosure documents sealed with SHA-256 provenance hashes.
-* **Zero-Knowledge K-Anonymity Privacy Protocol**: Queries global breach datasets using mathematical 5-character SHA-256 prefix buckets, ensuring the server never receives or logs the plaintext identity being queried.
-* **3D Graph ML Blast Radius Engine**: Hardware-accelerated WebGL Three.js constellation visualizer calculating Betweenness Centrality and Dijkstra Shortest Path metrics to identify Single Points of Failure (SPOFs) before lateral attack pivoting.
-* **Honey-Credential Canary Deception Tripwires**: Generates synthetic decoy tokens (AWS IAM, GitHub Personal Access Tokens, OpenAI keys) planted in repositories to trigger instantaneous 0-Day alerts upon external scraping.
-* **Autonomous Non-Destructive Verification Probes**: Executes automated out-of-band read challenges against cloud endpoints to verify whether leaked credentials are active or neutralized (HTTP 401).
-* **Passwordless Cryptographic Authentication**: RFC-compliant WebAuthn biometric passkey authentication and JWT token rotation stored in Supabase PostgreSQL with strict Row-Level Security (RLS).
+### 5. 📱 Mobile & Smartphone-First Design
+* **Responsive Hamburger Drawer:** Smooth touch menu for seamless switching across Personal Safety, OSINT Radar, Entity Mapping, Audit Reports, and CLI Downloads.
+* **Bottom Thumb-Bar Navigation:** One-thumb navigation dock on mobile screens for quick access to SOC Dashboard, Personal Safety, Threat Radar, and 3D Graph.
+* **Ergonomic Touch Targets:** $\ge 44\text{px}$ touch targets, responsive 2x2 category grids, and notch safe-area padding.
+* **Battery & GPU Power Throttling:** Automatically pauses Three.js WebGL rendering loops when browser tabs are inactive or hidden (`document.hidden`), preserving mobile battery life.
 
 ---
 
-## System Architecture
+### 6. 🛡️ Enterprise Security Hardening
+* **Defense-in-Depth HTTP Headers:** Strict Content Security Policy, HSTS (`max-age=63072000`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, and `Permissions-Policy`.
+* **Anti-DoS Sliding-Window Rate Limiter:** 120 requests/minute per client IP with dynamic `X-RateLimit-*` response headers.
+* **Zero-Knowledge $k$-Anonymity:** Client-side SHA-256 hashing in browser RAM; plaintext queries are NEVER transmitted over the wire.
+
+---
+
+## 🏗️ System Architecture
 
 ```
 +-----------------------------------------------------------------------------------+
@@ -78,186 +118,77 @@ anveshak canary --type github --memo "Staging Backend Decoy"
        |  (WebGL Studio UI)  |                         |  (Async Service)    |
        +---------------------+                         +---------------------+
                  |                                               |
-                 +-- Web Crypto SHA-256 Buckets                  +-- K-Anonymity Lookup Engine
-                 +-- 3D WebGL Constellation Graph                +-- Graph ML Centrality Engine
-                 +-- Cyber DNA Blast Visualizer                  +-- Celery Background Sweepers
+                 +-- Web Crypto SHA-256 Buckets                  +-- K-Anonymity & boAt Catalogs
+                 +-- 3D WebGL Constellation Graph                +-- SutraAgent ReAct Engine
+                 +-- CyberDnaML Blast Predictor                  +-- CyberDnaML GNN Predictor
+                 +-- Personal Safety Guard Hub                   +-- Monte Carlo Simulator
                  +-- Deception Tripwire Manager                  +-- Autonomous Probe Verifier
                  |                                               |
                  v                                               v
        +---------------------+                         +---------------------+
        |    Vercel CDN /     |                         | PostgreSQL 16 (RLS) |
-       |    Nginx Alpine     |                         | Redis 7 Task Queue  |
+       |    Nginx Alpine     |                         | In-Memory Cache/Trie|
        +---------------------+                         +---------------------+
 ```
 
 ---
 
-## Zero-Knowledge Threat Verification Sequence
+## 🧪 Automated Testing & Verification
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor SecurityOperator as Security Operator
-    participant Client as Web Crypto Engine
-    participant Gateway as FastAPI Gateway
-    participant KAnon as K-Anonymity Pool
-    participant GraphML as 3D Graph ML Engine
-    participant Probe as Verification Probe
+Run the full automated test suite:
 
-    SecurityOperator->>Client: Input Target Credential / Identity
-    Client->>Client: Compute SHA-256 Hash -> Extract 5-Char Prefix
-    Client->>Gateway: Query Prefix Bucket (e.g. 5e884) [Zero Identity Leak]
-    Gateway->>KAnon: Fetch Match Bucket Suffix Hashes
-    KAnon-->>Client: Return 100+ Suffix Records in Prefix Range
-    Client->>Client: Locally Compare Full Hash (Client-Side Match)
-    alt Exposure Confirmed
-        Client->>Gateway: Request Graph ML Topology for Matched Entities
-        Gateway->>GraphML: Compute Betweenness Centrality & Dijkstra Shortest Path
-        GraphML-->>Client: Stream Node Topologies (< 120ms)
-        Client->>SecurityOperator: Render 3D Constellation Blast Radius (60 FPS)
-        Gateway->>Probe: Execute Read-Only Non-Destructive Auth Challenge
-        Probe-->>SecurityOperator: Confirm Revocation Status (Active vs Neutralized)
-    end
+```bash
+# 1. Backend Pytest Suite (12/12 Tests)
+cd backend
+python -m pytest tests/ -v
+
+# 2. Frontend Production Build & Typecheck
+cd ../frontend
+npm run build
 ```
 
 ---
 
-## Mathematical Formulations
-
-### 1. K-Anonymity Entropy & Zero-Knowledge Suffix Bucketing
-Given an input identifier string $u$, the client computes the cryptographic SHA-256 digest:
-$$H(u) = 	ext{SHA-256}(u) = p mathbin{Vert} s$$
-where $p = H(u)_{1..5}$ represents the 5-character prefix and $s = H(u)_{6..64}$ represents the suffix. The privacy set size $K$ satisfies:
-$$K = |mathcal{B}(p)| ge k_{min} quad 	ext{where } mathcal{B}(p) = { s_i mid H(u_i)_{1..5} = p }$$
-
-### 2. Graph Betweenness Centrality (Blast Radius Metric)
-For a connected asset topology graph $G = (V, E)$, the blast radius centrality $C_B(v)$ of entity $v$ is computed as:
-$$C_B(v) = sum_{s 
-eq v 
-eq t in V} rac{sigma_{st}(v)}{sigma_{st}}$$
-where $sigma_{st}$ is the total number of shortest paths from node $s$ to node $t$, and $sigma_{st}(v)$ is the number of those paths passing through entity $v$.
-
----
-
-## Performance & Precision Benchmarks
-
-| Metric | Target Specification | Achieved Benchmark |
-| :--- | :--- | :--- |
-| **K-Anonymity Query Latency** | $< 150	ext{ms}$ | **$118	ext{ms}$ Client-Side Verification** |
-| **3D Constellation Viewport** | $60	ext{ FPS}$ | **WebGL Hardware-Accelerated** |
-| **Server Identity Leakage** | $0	ext{ bits}$ | **Mathematical Zero-Knowledge** |
-| **Graph Centrality Calculation** | $< 50	ext{ms}$ ($N = 500$ nodes) | **NetworkX / GraphML Optimized** |
-| **Canary Trigger Dispatch Time** | $< 1.5	ext{s}$ | **Zero-Delay Celery Queue** |
-
----
-
-## Directory Structure
+## 📁 Modular Directory Structure
 
 ```
 AnveshakSutra/
-├── backend/                  # FastAPI 0.110+ asynchronous backend & Celery workers
-│   ├── Dockerfile            # Python 3.12 slim container
-│   ├── requirements.txt
-│   ├── supabase_schema.sql   # PostgreSQL DDL & Row-Level Security definitions
-│   └── app/
-│       ├── api/v1/           # RESTful route controllers
-│       ├── core/             # Security, config & database engines
-│       ├── models/           # SQLAlchemy ORM schemas
-│       ├── services/         # K-Anonymity, Graph ML & Probe services
-│       └── workers/          # Celery asynchronous task definitions
-├── frontend/                 # React 18 + Three.js 3D Constellation dashboard
-│   ├── Dockerfile            # Multi-stage production container
-│   ├── nginx.conf            # Gzip compression & SPA fallback routing
-│   ├── package.json
-│   ├── vite.config.ts
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/           # API routes (agent, identities, canaries, cyber-dna, reports)
+│   │   ├── core/             # Security middleware, rate limiters, config
+│   │   ├── models/           # SQLAlchemy schemas
+│   │   └── services/
+│   │       ├── agentic_service.py       # SutraAgent ReAct autonomous loop
+│   │       ├── ml_prediction_service.py # CyberDnaML Sigmoidal GNN & Monte Carlo
+│   │       ├── k_anonymity_service.py   # Zero-Knowledge prefix matching & live APIs
+│   │       ├── breach_catalogs.py       # boAt 7.5M, Naz.API, COMB datasets
+│   │       └── canary_service.py        # Honey-token generator & fingerprinting
+│   └── tests/                # Automated pytest suite (12 test cases)
+├── frontend/
+│   ├── public/downloads/     # Packaged CLI wheels (.whl) & installer scripts
 │   └── src/
-│       ├── components/3d/    # Three.js 3D graph visualizers
-│       ├── components/core/  # K-Anonymity search, tripwires & canary manager
-│       ├── hooks/            # Web Crypto & state management hooks
-│       └── pages/            # Dashboard, Graph ML & Exposure views
-├── ml/                       # Threat classification & Graph ML training scripts
-│   └── training/
-│       └── train_threat_classifier.py
-├── nginx/                    # Production reverse proxy & SSL configuration
-│   ├── Dockerfile
-│   └── nginx.conf
-├── docker-compose.yml        # Local development orchestration
-├── docker-compose.prod.yml   # Multi-container production stack
-├── render.yaml               # Render cloud deployment blueprint
-├── package.json              # Monorepo build and test runner
-├── LICENSE                   # Proprietary Strict License
+│       ├── components/
+│       │   ├── landing/      # Modular landing page components (Hero, Navbar, Guide)
+│       │   ├── safety/       # Modular Personal Safety Hub components
+│       │   ├── layout/       # Modular Console layout & mobile navigation
+│       │   ├── AutonomousAgentConsole.tsx # ReAct streaming console & What-If simulator
+│       │   ├── CyberDnaVisualizer3D.tsx   # 3D Three.js force graph
+│       │   └── CanaryStudio.tsx           # Honey-token deception manager
+│       └── services/apiClient.ts          # Unified REST client with full typed methods
+├── cli/                      # Standalone Developer CLI package (anveshak)
 └── README.md
 ```
 
 ---
 
-## Quickstart & Local Deployment
-
-### 1. Docker Multi-Container Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/GuruMachanica/AnveshakSutra.git
-cd AnveshakSutra
-
-# Launch all infrastructure services in background
-docker compose up --build -d
-
-# Verify container health
-docker compose ps
-```
-
-* **Frontend Web Dashboard:** `http://localhost:3000`
-* **Backend API & Swagger:** `http://localhost:8000/api/v1/docs`
-
----
-
-### 2. Manual Development Setup
-
-```bash
-# Install and build frontend
-npm run build:frontend
-
-# Launch frontend development server
-npm run dev:frontend
-
-# Launch backend in separate terminal
-npm run dev:backend
-```
-
----
-
-## 🔮 Future Work & Engineering Roadmap
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                   FUTURE ENGINEERING ROADMAP                                             │
-├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 1. 🧩 VS Code Extension (AnveshakSutra CodeGuard):                                                        │
-│    • Real-time inline red underlines whenever a developer types or pastes a high-entropy secret.         │
-│    • 1-Click Code Action: "Replace with Canary Honey-Token & Rotate".                                    │
-├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 2. 🌐 Chrome & Firefox Browser Extension:                                                                │
-│    • Client-side privacy shield that intercepts and warns developers before pasting API keys or passwords│
-│      into ChatGPT, Claude, public forums, or unencrypted web forms.                                      │
-├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 3. 🔐 Enterprise Single Sign-On (SAML 2.0 / Okta / OIDC):                                                │
-│    • Multi-tenant enterprise team management with Okta/Azure AD directory synchronization.               │
-├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 4. 📱 Mobile Alerting & Incident Response App (React Native):                                            │
-│    • Push notification alerts the instant a Canary Honey-Token is detonated by an external threat actor. │
-└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Author & Creator
+## 👤 Author & Creator
 
 * **Mohammad Huzaifa** (Solo Creator & Lead Architect) — [GitHub](https://github.com/GuruMachanica)
 
 ---
 
-## License
+## 📄 License
 
 This repository is licensed under the **Proprietary - Strict Private Use & Inspection License**.  
 Copyright (c) 2026 Mohammad Huzaifa. All rights reserved.  
