@@ -12,6 +12,7 @@ export interface AuthUser {
   email: string;
   clearance?: string;
   role?: string;
+  avatar?: string;
 }
 
 export interface AuthResponse {

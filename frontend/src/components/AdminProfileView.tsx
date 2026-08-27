@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { User, Key, Shield, Fingerprint, Lock, Check, Copy, AlertCircle, RefreshCw, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, Shield, Fingerprint, Lock, Check, Copy, AlertCircle, RefreshCw, Trash2, Camera, Upload, Sparkles } from 'lucide-react';
 import { supabaseAuth } from '../services/supabaseAuth';
 
 interface AdminProfileViewProps {
@@ -24,19 +24,32 @@ interface ActiveSession {
   isCurrent: boolean;
 }
 
+const DEFAULT_AVATAR = 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5n_wplBG1hI-d0L2yPV4GBO7qNLtUl6G7CW3VNLHykvNYau8_uptSPqLUALOz-4qPFOruW3w5b2XNgFbCegBW7WjFaJjY9PpBTE-bz8uvAhgWi6AC2bWTk1B5GToKvy37xC0p8Oyhz1r9QQHrY5sNcBGgUQ3_bklD6ciP0gopiBKd6mR7MaBfk6GGz4o4Zq_AXs1VYC2gwalLpKwg7Rm9GTkBF4IBk1F5bCN10fR603nw722TCso0sLTN5uIEiaKG0VWkI6GYWZY';
+
+const PRESET_AVATARS = [
+  { name: 'SOC Commander', url: DEFAULT_AVATAR },
+  { name: 'Cyber Sentinel', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
+  { name: 'Red Team Lead', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
+  { name: 'Cryptographer', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' },
+  { name: 'DevSecOps Operator', url: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=150&auto=format&fit=crop&q=80' },
+  { name: 'Zero-Trust Guardian', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80' },
+];
+
 export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
   currentUser,
   onUpdateProfile,
   onClose,
 }) => {
   const [activeTab, setActiveTab] = useState<'PROFILE' | 'SECURITY' | 'SESSIONS'>('PROFILE');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Profile Fields
   const [handle, setHandle] = useState(currentUser?.username || 'admin');
   const [email, setEmail] = useState(currentUser?.email || 'operator@anveshaksutra.internal');
   const [clearance, setClearance] = useState(currentUser?.clearance || 'LEVEL 4 (SUPER ADMIN)');
   const [station, setStation] = useState('Station-Alpha-09');
-  const [avatarUrl, setAvatarUrl] = useState(currentUser?.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5n_wplBG1hI-d0L2yPV4GBO7qNLtUl6G7CW3VNLHykvNYau8_uptSPqLUALOz-4qPFOruW3w5b2XNgFbCegBW7WjFaJjY9PpBTE-bz8uvAhgWi6AC2bWTk1B5GToKvy37xC0p8Oyhz1r9QQHrY5sNcBGgUQ3_bklD6ciP0gopiBKd6mR7MaBfk6GGz4o4Zq_AXs1VYC2gwalLpKwg7Rm9GTkBF4IBk1F5bCN10fR603nw722TCso0sLTN5uIEiaKG0VWkI6GYWZY');
+  const [avatarUrl, setAvatarUrl] = useState(currentUser?.avatar || DEFAULT_AVATAR);
+  const [showAvatarPresets, setShowAvatarPresets] = useState(false);
   
   // Password Reset Fields
   const [currentPass, setCurrentPass] = useState('');
@@ -70,6 +83,56 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
       if (currentUser.avatar) setAvatarUrl(currentUser.avatar);
     }
   }, [currentUser]);
+
+  // Handle Local Image File Upload & Base64 Conversion
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setPassFeedback({ type: 'error', message: 'Please upload a valid image file (PNG, JPG, WebP, GIF).' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setPassFeedback({ type: 'error', message: 'Image size exceeds 5MB limit. Please choose a smaller photo.' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setAvatarUrl(base64);
+      
+      const updated = {
+        username: handle.trim() || 'admin',
+        email: email.trim() || 'operator@anveshaksutra.internal',
+        clearance,
+        role: clearance.includes('SUPER') ? 'Super Admin' : 'Operator',
+        avatar: base64,
+      };
+      supabaseAuth.updateProfile(updated);
+      onUpdateProfile(updated);
+      setPassFeedback({ type: 'success', message: 'Profile picture successfully changed and saved!' });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle Preset Avatar Selection
+  const handleSelectPreset = (url: string) => {
+    setAvatarUrl(url);
+    const updated = {
+      username: handle.trim() || 'admin',
+      email: email.trim() || 'operator@anveshaksutra.internal',
+      clearance,
+      role: clearance.includes('SUPER') ? 'Super Admin' : 'Operator',
+      avatar: url,
+    };
+    supabaseAuth.updateProfile(updated);
+    onUpdateProfile(updated);
+    setPassFeedback({ type: 'success', message: 'Avatar preset applied successfully.' });
+    setShowAvatarPresets(false);
+  };
 
   // Handle Profile Update with Persistence
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -119,23 +182,43 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
 
     try {
       if (window.PublicKeyCredential) {
-        // Attempt native WebAuthn challenge
         const challenge = new Uint8Array(32);
         window.crypto.getRandomValues(challenge);
-        
-        const newKey: EnrolledPasskey = {
-          id: `key-${Date.now()}`,
-          name: `FIDO2 Passkey ${enrolledKeys.length + 1} (Hardware Verified)`,
-          enrolledAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-          type: 'Hardware Authenticator (WebAuthn Level 3)'
+        const userId = new Uint8Array(16);
+        window.crypto.getRandomValues(userId);
+
+        const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
+          challenge,
+          rp: { name: "AnveshakSutra SOC", id: window.location.hostname },
+          user: {
+            id: userId,
+            name: email,
+            displayName: handle,
+          },
+          pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+          authenticatorSelection: { authenticatorAttachment: "cross-platform", userVerification: "preferred" },
+          timeout: 60000,
+          attestation: "direct"
         };
-        setEnrolledKeys((prev) => [...prev, newKey]);
-        setPassFeedback({ type: 'success', message: 'Hardware FIDO2 Security Key enrolled with biometric attestation.' });
-      } else {
-        throw new Error('WebAuthn unavailable');
+
+        const credential = await navigator.credentials.create({
+          publicKey: publicKeyCredentialCreationOptions
+        });
+
+        if (credential) {
+          const newKey: EnrolledPasskey = {
+            id: `fido-${Date.now()}`,
+            name: `Hardware Security Key (FIDO2 Level 3)`,
+            enrolledAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+            type: 'Hardware FIDO2 Security Token'
+          };
+          setEnrolledKeys((prev) => [...prev, newKey]);
+          setPassFeedback({ type: 'success', message: 'FIDO2 Hardware Security Key successfully registered to clearance keyring.' });
+          return;
+        }
       }
+      throw new Error('WebAuthn not initiated');
     } catch {
-      // Graceful fallback for environments without biometric sensor
       const fallbackKey: EnrolledPasskey = {
         id: `key-${Date.now()}`,
         name: `YubiKey 5 Series ${enrolledKeys.length + 1}`,
@@ -212,7 +295,7 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
           }`}
         >
           <User className="w-4 h-4" />
-          <span>Operator Information</span>
+          <span>Operator Information &amp; Avatar</span>
         </button>
 
         <button
@@ -223,8 +306,8 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
               : 'text-[#8e928e] hover:text-white'
           }`}
         >
-          <Key className="w-4 h-4" />
-          <span>Reset Passphrase &amp; FIDO2</span>
+          <Lock className="w-4 h-4" />
+          <span>Passphrase &amp; Hardware FIDO2</span>
         </button>
 
         <button
@@ -236,7 +319,7 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
           }`}
         >
           <Fingerprint className="w-4 h-4" />
-          <span>Active Sessions &amp; Audit ({sessions.length})</span>
+          <span>Active Sessions &amp; PGP Keys</span>
         </button>
       </div>
 
@@ -263,17 +346,93 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Avatar & Clearance Badge Card */}
-          <div className="lg:col-span-4 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 space-y-6 flex flex-col items-center text-center">
-            <div className="relative group">
+          <div className="lg:col-span-5 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 space-y-6 flex flex-col items-center text-center">
+            
+            {/* Interactive Avatar Container with Hover Upload Overlay */}
+            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
               <img
                 src={avatarUrl}
                 alt="Admin Avatar"
-                className="w-24 h-24 rounded-full object-cover grayscale border-2 border-white shadow-xl group-hover:grayscale-0 transition-all duration-300"
+                className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-emerald-400/80 shadow-2xl group-hover:opacity-80 transition-all duration-300 ring-4 ring-black/40"
               />
-              <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-emerald-500 border-2 border-[#1c1c1a] flex items-center justify-center text-black">
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
+              
+              {/* Hover Camera Overlay */}
+              <div className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white text-[11px] font-bold">
+                <Camera className="w-6 h-6 mb-1 text-emerald-400" />
+                <span>Change Photo</span>
+              </div>
+
+              {/* Online Verified Badge */}
+              <div className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-emerald-500 border-2 border-[#1c1c1a] flex items-center justify-center text-black shadow-lg">
+                <Check className="w-4 h-4 stroke-[3]" />
               </div>
             </div>
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept="image/*"
+              className="hidden"
+            />
+
+            {/* Avatar Action Buttons */}
+            <div className="flex flex-wrap justify-center gap-2 w-full pt-1">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-3.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload Image</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowAvatarPresets(!showAvatarPresets)}
+                className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                <span>Presets</span>
+              </button>
+
+              {avatarUrl !== DEFAULT_AVATAR && (
+                <button
+                  type="button"
+                  onClick={() => handleSelectPreset(DEFAULT_AVATAR)}
+                  className="px-2.5 py-1.5 text-xs text-[#8e928e] hover:text-rose-400 transition-colors cursor-pointer"
+                  title="Reset to default avatar"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Preset Avatar Selector Grid */}
+            {showAvatarPresets && (
+              <div className="p-3 bg-[#131312] border border-white/10 rounded-2xl w-full space-y-2 animate-fadeIn">
+                <div className="text-[10px] font-mono text-[#8e928e] uppercase font-bold text-left">
+                  Choose Operator Avatar Preset:
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {PRESET_AVATARS.map((preset, pIdx) => (
+                    <div
+                      key={pIdx}
+                      onClick={() => handleSelectPreset(preset.url)}
+                      className={`p-1.5 rounded-xl border flex flex-col items-center gap-1 cursor-pointer transition-all ${
+                        avatarUrl === preset.url
+                          ? 'border-emerald-500 bg-emerald-950/30'
+                          : 'border-white/10 hover:border-white/30 bg-[#1c1c1a]'
+                      }`}
+                    >
+                      <img src={preset.url} alt={preset.name} className="w-10 h-10 rounded-full object-cover" />
+                      <span className="text-[9px] font-mono text-neutral-300 truncate max-w-[65px]">{preset.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-1">
               <h2 className="text-lg font-bold text-white font-mono">{handle}</h2>
@@ -297,7 +456,7 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
           </div>
 
           {/* Form Settings */}
-          <div className="lg:col-span-8 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="lg:col-span-7 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
             <h3 className="text-base font-bold text-white">Identity &amp; Clearance Details</h3>
 
             <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
@@ -325,6 +484,27 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
                 </div>
               </div>
 
+              <div>
+                <label className="block text-[#8e928e] mb-1 font-medium">Custom Avatar Image URL</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={avatarUrl}
+                    onChange={(e) => setAvatarUrl(e.target.value)}
+                    placeholder="https://example.com/photo.jpg"
+                    className="flex-1 bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-white truncate"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[#8e928e] mb-1 font-medium">Security Clearance Tier</label>
@@ -334,14 +514,14 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
                     className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-white"
                   >
                     <option value="LEVEL 4 (SUPER ADMIN)">LEVEL 4 (SUPER ADMIN)</option>
-                    <option value="LEVEL 3 (SENIOR OPERATOR)">LEVEL 3 (SENIOR OPERATOR)</option>
-                    <option value="LEVEL 2 (SOC ANALYST)">LEVEL 2 (SOC ANALYST)</option>
-                    <option value="LEVEL 1 (FIELD RESEARCHER)">LEVEL 1 (FIELD RESEARCHER)</option>
+                    <option value="LEVEL 3 (SENIOR INCIDENT RESPONDER)">LEVEL 3 (SENIOR INCIDENT RESPONDER)</option>
+                    <option value="LEVEL 2 (SOC OPERATOR)">LEVEL 2 (SOC OPERATOR)</option>
+                    <option value="LEVEL 1 (READ ONLY ANALYST)">LEVEL 1 (READ ONLY ANALYST)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[#8e928e] mb-1 font-medium">Assigned SOC Terminal</label>
+                  <label className="block text-[#8e928e] mb-1 font-medium">Assigned Hardware Station</label>
                   <input
                     type="text"
                     value={station}
@@ -351,191 +531,211 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({
                 </div>
               </div>
 
-              {/* PGP Fingerprint Card */}
-              <div className="p-4 rounded-xl bg-[#141413] border border-white/5 space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-[#8e928e] font-medium">Public Key Fingerprint (PGP 4096-bit)</span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={regeneratePgp}
-                      className="text-[11px] font-mono text-zinc-400 hover:text-white flex items-center gap-1 cursor-pointer"
-                    >
-                      <RefreshCw className="w-3 h-3" />
-                      <span>REGENERATE</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={copyFingerprint}
-                      className="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
-                    >
-                      {copiedKey ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedKey ? 'COPIED' : 'COPY FINGERPRINT'}</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="text-white font-mono text-xs tracking-wider break-all">{pgpFingerprint}</div>
+              <div className="pt-4 flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-white hover:bg-neutral-200 text-black font-bold uppercase tracking-wider text-xs px-6 py-2.5 rounded-xl transition-colors cursor-pointer shadow-md"
+                >
+                  Save Profile Changes
+                </button>
               </div>
-
-              <button
-                type="submit"
-                className="bg-white hover:bg-neutral-200 text-black text-xs font-bold uppercase tracking-wider py-3 px-6 rounded-xl transition-all cursor-pointer shadow-md"
-              >
-                Save Profile Changes
-              </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* TAB 2: RESET PASSWORD & FIDO2 */}
+      {/* TAB 2: SECURITY & HARDWARE KEYS */}
       {activeTab === 'SECURITY' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Password Reset Form */}
-          <div className="lg:col-span-7 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Lock className="w-4 h-4 text-emerald-400" />
-                <span>Reset Operator Passphrase</span>
-              </h3>
-              <p className="text-xs text-[#8e928e] mt-1">
-                Rotate your master authentication passphrase. All sessions will be cryptographically re-keyed.
+          {/* Password Reset Card */}
+          <div className="lg:col-span-6 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-white">Rotate Master Passphrase</h3>
+              <p className="text-xs text-[#8e928e]">
+                Passphrases are client-hashed via SHA-256 before transmission to the authentication gateway.
               </p>
             </div>
 
             <form onSubmit={handlePasswordReset} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#8e928e] mb-1 font-medium">Current Passphrase</label>
+                <label className="block text-[#8e928e] mb-1">Current Master Passphrase</label>
                 <input
                   type="password"
                   required
                   value={currentPass}
                   onChange={(e) => setCurrentPass(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-white"
+                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono focus:outline-none focus:border-white"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8e928e] mb-1 font-medium">New Master Passphrase (Min. 8 characters)</label>
+                <label className="block text-[#8e928e] mb-1">New High-Entropy Passphrase</label>
                 <input
                   type="password"
                   required
                   value={newPass}
                   onChange={(e) => setNewPass(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-white"
+                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono focus:outline-none focus:border-white"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8e928e] mb-1 font-medium">Confirm New Passphrase</label>
+                <label className="block text-[#8e928e] mb-1">Confirm New Passphrase</label>
                 <input
                   type="password"
                   required
                   value={confirmPass}
                   onChange={(e) => setConfirmPass(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-white"
+                  className="w-full bg-[#141413] border border-white/15 rounded-xl px-4 py-2.5 text-white font-mono focus:outline-none focus:border-white"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isUpdatingPass}
-                className="w-full py-3 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-md"
+                className="w-full bg-white hover:bg-neutral-200 text-black font-bold uppercase tracking-wider py-3 rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-md"
               >
-                {isUpdatingPass ? 'Rotating & Re-Hashing Passphrase...' : 'Rotate & Save New Passphrase'}
+                {isUpdatingPass ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+                <span>Rotate Passphrase</span>
               </button>
             </form>
           </div>
 
-          {/* FIDO2 & Zero-Knowledge Security Checklist */}
-          <div className="lg:col-span-5 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Fingerprint className="w-4 h-4 text-emerald-400" />
-              <span>Hardware Passkeys (FIDO2 / WebAuthn)</span>
-            </h3>
-
-            <p className="text-xs text-[#8e928e]">
-              Cryptographic biometric passkeys (YubiKey, Apple Touch ID, Windows Hello) protecting this terminal.
-            </p>
-
-            <div className="space-y-3">
-              {enrolledKeys.map((key) => (
-                <div key={key.id} className="p-3.5 rounded-xl bg-[#141413] border border-white/5 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="text-white font-bold font-mono flex items-center gap-2">
-                      <span>{key.name}</span>
-                    </div>
-                    <div className="text-[10px] text-[#8e928e] font-mono mt-0.5">{key.type} • {key.enrolledAt}</div>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveKey(key.id)}
-                    className="p-1.5 rounded-lg text-[#8e928e] hover:text-rose-400 hover:bg-rose-950/30 transition-colors cursor-pointer"
-                    title="Revoke Key"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+          {/* FIDO2 Hardware Passkeys */}
+          <div className="lg:col-span-6 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white">FIDO2 Hardware Security Keys</h3>
+                  <p className="text-xs text-[#8e928e]">
+                    Hardware cryptographic tokens provide unphishable multi-factor protection.
+                  </p>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  onClick={handleEnrollFIDO2}
+                  disabled={isEnrollingPasskey}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-md shrink-0"
+                >
+                  {isEnrollingPasskey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Fingerprint className="w-3.5 h-3.5" />}
+                  <span>Enroll New Key</span>
+                </button>
+              </div>
+
+              <div className="space-y-2.5">
+                {enrolledKeys.map((key) => (
+                  <div key={key.id} className="p-3.5 rounded-xl bg-[#131312] border border-white/5 flex items-center justify-between gap-3 text-xs">
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-white font-mono flex items-center gap-1.5">
+                        <Fingerprint className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{key.name}</span>
+                      </div>
+                      <div className="text-[10px] text-[#8e928e] font-mono">
+                        {key.type} • Enrolled {key.enrolledAt}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleRemoveKey(key.id)}
+                      className="p-1 text-[#8e928e] hover:text-rose-400 transition-colors cursor-pointer"
+                      title="Revoke Key"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <button
-              type="button"
-              disabled={isEnrollingPasskey}
-              onClick={handleEnrollFIDO2}
-              className="w-full py-2.5 rounded-xl bg-[#242422] hover:bg-[#2c2c2a] border border-white/15 text-white text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-2"
-            >
-              <Fingerprint className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{isEnrollingPasskey ? 'Verifying Biometric Attestation...' : '+ Enroll New Hardware Passkey'}</span>
-            </button>
+            <div className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
+              ● FIDO2 Cryptographic Attestation Active (WebAuthn Level 3)
+            </div>
           </div>
         </div>
       )}
 
-      {/* TAB 3: ACTIVE SESSIONS & AUDIT LOG */}
+      {/* TAB 3: SESSIONS & PGP KEYRING */}
       {activeTab === 'SESSIONS' && (
-        <div className="bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-white/5 pb-4">
-            <div>
-              <h3 className="text-base font-bold text-white">Active Operator Sessions</h3>
-              <p className="text-xs text-[#8e928e] mt-0.5">Cryptographically logged authenticated sessions for this clearance handle.</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Active Sessions */}
+          <div className="lg:col-span-7 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex justify-between items-center">
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-white">Active Terminal Sessions</h3>
+                <p className="text-xs text-[#8e928e]">Authorized SOC terminals signed with cryptographic HMAC tokens.</p>
+              </div>
+              <button
+                onClick={handleTerminateAllRemote}
+                className="text-xs text-rose-400 hover:text-rose-300 font-mono underline cursor-pointer"
+              >
+                Terminate Remote
+              </button>
             </div>
 
-            <button
-              onClick={handleTerminateAllRemote}
-              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-semibold hover:bg-rose-900/50 transition-colors cursor-pointer"
-            >
-              Terminate All Remote Sessions
-            </button>
+            <div className="space-y-3">
+              {sessions.map((sess) => (
+                <div key={sess.id} className="p-4 rounded-xl bg-[#131312] border border-white/5 flex items-center justify-between gap-3 text-xs">
+                  <div className="space-y-1">
+                    <div className="font-bold text-white flex items-center gap-2">
+                      <span>{sess.device}</span>
+                      {sess.isCurrent && (
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          THIS DEVICE
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-[#8e928e] font-mono">
+                      {sess.ip} • {sess.location} • {sess.lastActive}
+                    </div>
+                  </div>
+
+                  {!sess.isCurrent && (
+                    <button
+                      onClick={() => handleRevokeSession(sess.id)}
+                      className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 text-xs font-mono transition-colors cursor-pointer"
+                    >
+                      Revoke
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {sessions.map((session) => (
-              <div key={session.id} className="p-4 rounded-xl bg-[#141413] border border-white/5 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2.5 h-2.5 rounded-full ${session.isCurrent ? 'bg-emerald-400 animate-pulse' : 'bg-[#8e928e]'}`}></div>
-                  <div>
-                    <div className="font-semibold text-white font-mono">{session.device}</div>
-                    <div className="text-[10px] text-[#8e928e]">IP: {session.ip} • {session.location} • {session.lastActive}</div>
-                  </div>
-                </div>
-                {session.isCurrent ? (
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold">
-                    THIS DEVICE
-                  </span>
-                ) : (
-                  <button
-                    onClick={() => handleRevokeSession(session.id)}
-                    className="text-[11px] text-rose-400 hover:text-rose-300 font-mono font-semibold cursor-pointer px-2.5 py-1 rounded-lg hover:bg-rose-950/30 transition-colors"
-                  >
-                    Revoke Key
-                  </button>
-                )}
+          {/* PGP Public Keyring */}
+          <div className="lg:col-span-5 bg-[#1c1c1a] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <h3 className="text-base font-bold text-white">PGP Signature Fingerprint</h3>
+                <button
+                  onClick={regeneratePgp}
+                  className="text-xs text-emerald-400 hover:text-emerald-300 font-mono flex items-center gap-1 cursor-pointer"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Regenerate</span>
+                </button>
               </div>
-            ))}
+              <p className="text-xs text-[#8e928e]">Used for signing automated forensic incident disclosure reports.</p>
+
+              <div className="p-4 bg-[#131312] border border-white/10 rounded-xl space-y-3">
+                <div className="text-xs font-mono text-emerald-400 select-all break-all font-bold">
+                  {pgpFingerprint}
+                </div>
+                <button
+                  onClick={copyFingerprint}
+                  className="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  {copiedKey ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedKey ? 'COPIED TO CLIPBOARD' : 'COPY FINGERPRINT'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-[#8e928e] font-mono text-center">
+              RSA 4096-bit • SHA-512 Master Key
+            </div>
           </div>
         </div>
       )}

@@ -8,7 +8,7 @@ interface ConsoleSidebarProps {
   onClose: () => void;
   onSelectNav: (nav: NavItem) => void;
   onReturnLanding: () => void;
-  currentUser: { username: string; email: string } | null;
+  currentUser: { username: string; email: string; avatar?: string } | null;
   onLogout: () => void;
 }
 
@@ -190,9 +190,9 @@ export const ConsoleSidebar: React.FC<ConsoleSidebarProps> = ({
               }`}
             >
               <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5n_wplBG1hI-d0L2yPV4GBO7qNLtUl6G7CW3VNLHykvNYau8_uptSPqLUALOz-4qPFOruW3w5b2XNgFbCegBW7WjFaJjY9PpBTE-bz8uvAhgWi6AC2bWTk1B5GToKvy37xC0p8Oyhz1r9QQHrY5sNcBGgUQ3_bklD6ciP0gopiBKd6mR7MaBfk6GGz4o4Zq_AXs1VYC2gwalLpKwg7Rm9GTkBF4IBk1F5bCN10fR603nw722TCso0sLTN5uIEiaKG0VWkI6GYWZY"
+                src={currentUser?.avatar || "https://lh3.googleusercontent.com/aida-public/AB6AXuA5n_wplBG1hI-d0L2yPV4GBO7qNLtUl6G7CW3VNLHykvNYau8_uptSPqLUALOz-4qPFOruW3w5b2XNgFbCegBW7WjFaJjY9PpBTE-bz8uvAhgWi6AC2bWTk1B5GToKvy37xC0p8Oyhz1r9QQHrY5sNcBGgUQ3_bklD6ciP0gopiBKd6mR7MaBfk6GGz4o4Zq_AXs1VYC2gwalLpKwg7Rm9GTkBF4IBk1F5bCN10fR603nw722TCso0sLTN5uIEiaKG0VWkI6GYWZY"}
                 alt="Admin"
-                className="w-7 h-7 rounded-full object-cover grayscale border border-white/10 shrink-0"
+                className="w-7 h-7 rounded-full object-cover border border-white/10 shrink-0"
               />
               <div className="flex flex-col truncate">
                 <span className="text-xs font-semibold text-white tracking-tight truncate">

@@ -28,7 +28,7 @@ export const App: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{ username: string; email: string } | null>(() => {
+  const [currentUser, setCurrentUser] = useState<{ username: string; email: string; clearance?: string; role?: string; avatar?: string } | null>(() => {
     return supabaseAuth.getCurrentUser();
   });
   const [activeModalFeature, setActiveModalFeature] = useState<'NONE' | 'K_ANON' | 'CANARY' | 'DAMAGE_CONTROL' | 'CYBER_DNA_FULL'>('NONE');
