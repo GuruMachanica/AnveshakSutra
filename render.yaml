@@ -1,0 +1,28 @@
+# Render Infrastructure-as-Code Blueprint for AnveshakSutra (Zero-Cost Free Tier)
+# Enables 1-Click Deployment of FastAPI Backend with pure Python Asyncio Engine
+
+services:
+  # 1. FastAPI Web Service (Backend API & Zero-Cost Async Tasks)
+  - type: web
+    name: anveshaksutra-backend
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: BACKEND_CORS_ORIGINS
+        value: '["https://anveshak-sutra.vercel.app","https://anveshaksutra.vercel.app","https://anveshaksutra.netlify.app","http://localhost:3000"]'
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: postgresql+asyncpg://postgres:postgres_secret@localhost:5432/postgres
+      - key: ASYNC_ENGINE_WORKERS
+        value: "4"
+      - key: IN_MEMORY_CACHE_TTL
+        value: "3600"

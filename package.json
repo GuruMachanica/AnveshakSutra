@@ -1,0 +1,12 @@
+{
+  "name": "anveshaksutra-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AnveshakSutra - Autonomous Zero-Knowledge Exposure Monitor & 3D Graph ML Blast Radius Analyzer",
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "cd backend && uvicorn app.main:app --reload --port 8000"
+  }
+}

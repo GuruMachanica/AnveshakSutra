@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: anveshaksutra_prod_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: anveshaksutra_prod_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-anveshak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-anveshak_secret_production}
+      POSTGRES_DB: ${POSTGRES_DB:-anveshaksutra_prod}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-anveshak} -d ${POSTGRES_DB:-anveshaksutra_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: anveshaksutra_prod_redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-anveshak_redis_secret}
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-anveshak_redis_secret}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: anveshaksutra_prod_backend
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-anveshak}:${POSTGRES_PASSWORD:-anveshak_secret_production}@postgres:5432/${POSTGRES_DB:-anveshaksutra_prod}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-default_change_in_production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: anveshaksutra_prod_worker
+    restart: unless-stopped
+    command: celery -A app.workers.celery_app worker --loglevel=info -Q high_priority,matching,ingestion --concurrency=4
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-anveshak}:${POSTGRES_PASSWORD:-anveshak_secret_production}@postgres:5432/${POSTGRES_DB:-anveshaksutra_prod}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+    depends_on:
+      - backend
+      - redis
+      - postgres
+
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: anveshaksutra_prod_beat
+    restart: unless-stopped
+    command: celery -A app.workers.celery_app beat --loglevel=info
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-anveshak}:${POSTGRES_PASSWORD:-anveshak_secret_production}@postgres:5432/${POSTGRES_DB:-anveshaksutra_prod}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-anveshak_redis_secret}@redis:6379/0
+    depends_on:
+      - backend
+      - redis
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: anveshaksutra_prod_frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - backend
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:

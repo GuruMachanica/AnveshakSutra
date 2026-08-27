@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "anveshak-cli"
+version = "1.0.0"
+description = "AnveshakSutra Developer CLI: Autonomous Zero-Knowledge Secret Scanner & Breach Monitor"
+readme = "README.md"
+authors = [{ name = "Mohammad Huzaifa", email = "mdhuzaifa00786@gmail.com" }]
+license = { text = "Proprietary" }
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.25.0",
+]
+
+[project.scripts]
+anveshak = "anveshak.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
