@@ -75,8 +75,8 @@ anveshak report .
 | Component | Platform | URL | Status |
 |---|---|---|:---:|
 | **Web Studio** | **Vercel** | [**https://anveshak-sutra.vercel.app/**](https://anveshak-sutra.vercel.app/) | 🟢 **ACTIVE** |
-| **Backend API Gateway** | **Render** | [**https://anveshaksutra.onrender.com/health**](https://anveshaksutra.onrender.com/health) | 🟢 **HEALTHY** |
-| **Interactive API Docs** | **Render (Swagger)** | [**https://anveshaksutra.onrender.com/api/v1/docs**](https://anveshaksutra.onrender.com/api/v1/docs) | 🟢 **ACTIVE** |
+| **Backend API Gateway** | **Render** | [**http://localhost:8000/health**](http://localhost:8000/health) | 🟢 **HEALTHY** |
+| **Interactive API Docs** | **Render (Swagger)** | [**http://localhost:8000/api/v1/docs**](http://localhost:8000/api/v1/docs) | 🟢 **ACTIVE** |
 | **Database** | **Supabase** | `https://yqklwawmljxyxkcctnwk.supabase.co` | 🟢 **CONNECTED** |
 
 ---

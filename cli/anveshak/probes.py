@@ -7,7 +7,7 @@ import hashlib
 import httpx
 from typing import Dict, Any
 
-DEFAULT_API = "https://anveshaksutra.onrender.com/api/v1"
+DEFAULT_API = "http://localhost:8000/api/v1"
 
 def compute_k_anonymity_prefix(identifier: str) -> tuple[str, str]:
     """Computes SHA-256 hash and returns (prefix_5, suffix_59)."""

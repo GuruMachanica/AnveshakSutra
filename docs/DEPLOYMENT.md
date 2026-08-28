@@ -33,7 +33,7 @@ This guide details the step-by-step instructions to deploy AnveshakSutra to **Su
    - `SUPABASE_URL`: *(Your Supabase Project URL)*
    - `SUPABASE_KEY`: *(Your Supabase Anon Key)*
    - `JWT_SECRET_KEY`: `71f4b63ad4e9e8cf9deec1b90b2fff2437000b4c3f683e8581e61545235d12d0`
-5. Click **Deploy**. Your API will be live at `https://anveshaksutra.onrender.com`.
+5. Click **Deploy**. Your API will be live at `http://localhost:8000`.
 
 ---
 
@@ -43,7 +43,7 @@ This guide details the step-by-step instructions to deploy AnveshakSutra to **Su
 2. Select repository: `GuruMachanica/AnveshakSutra`.
 3. Set **Root Directory** to `frontend`.
 4. In **Environment Variables**, add:
-   - `VITE_API_URL`: `https://anveshaksutra.onrender.com/api/v1`
+   - `VITE_API_URL`: `http://localhost:8000/api/v1`
    - `VITE_SUPABASE_URL`: `https://<your-project>.supabase.co`
    - `VITE_SUPABASE_ANON_KEY`: `your_anon_key`
 5. Click **Deploy**. Your frontend will be live at `https://anveshak-sutra.vercel.app/`!

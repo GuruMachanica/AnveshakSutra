@@ -81,6 +81,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### 🌐 Live Production Deployments
 * **Web Application:** [https://anveshak-sutra.vercel.app/](https://anveshak-sutra.vercel.app/)
-* **Backend Health:** [https://anveshaksutra.onrender.com/health](https://anveshaksutra.onrender.com/health)
-* **Interactive API Docs:** [https://anveshaksutra.onrender.com/api/v1/docs](https://anveshaksutra.onrender.com/api/v1/docs)
+* **Backend Health:** [http://localhost:8000/health](http://localhost:8000/health)
+* **Interactive API Docs:** [http://localhost:8000/api/v1/docs](http://localhost:8000/api/v1/docs)
 * **Source Repository:** [https://github.com/GuruMachanica/AnveshakSutra](https://github.com/GuruMachanica/AnveshakSutra)

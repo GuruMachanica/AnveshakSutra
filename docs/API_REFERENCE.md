@@ -1,7 +1,7 @@
 # AnveshakSutra REST API Reference
 
-Base Production URL: `https://anveshaksutra.onrender.com/api/v1`  
-Interactive Swagger UI: `https://anveshaksutra.onrender.com/api/v1/docs`
+Base Production URL: `http://localhost:8000/api/v1`  
+Interactive Swagger UI: `http://localhost:8000/api/v1/docs`
 
 ---
 

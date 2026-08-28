@@ -10,8 +10,6 @@
 **AnveshakSutra** (अन्वेषकसूत्र) is an enterprise-grade cyber intelligence and breach blast radius containment platform. It bridges the gap between everyday digital safety for families and mathematical, defense-grade threat intelligence for SOC security engineers.
 
 * **Live Web Studio:** [https://anveshak-sutra.vercel.app/](https://anveshak-sutra.vercel.app/)
-* **Backend API Gateway:** `http://127.0.0.1:8000/api/v1`
-* **Interactive Swagger API Docs:** `http://127.0.0.1:8000/api/v1/docs`
 * **Developer CLI Hub (`anveshak`):** [`cli/`](cli/) | [Direct Website Downloads](frontend/public/downloads/)
 * **Repository:** [https://github.com/GuruMachanica/AnveshakSutra](https://github.com/GuruMachanica/AnveshakSutra)
 

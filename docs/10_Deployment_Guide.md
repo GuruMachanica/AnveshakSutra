@@ -12,7 +12,7 @@ For fast, free, and hassle-free deployment without managing VPS servers or Docke
                 │                               • Auto SSL, Global CDN, Zero Config
                 │
                 └─────────────────────────────► Render.com (FastAPI Backend)
-                                                • https://anveshaksutra-api.onrender.com
+                                                • http://localhost:8000
                                                 • Managed PostgreSQL + Redis + Workers
 ```
 
@@ -27,7 +27,7 @@ For fast, free, and hassle-free deployment without managing VPS servers or Docke
    - **FastAPI Web Service** (`anveshaksutra-backend`)
    - **Celery Worker Service** (`anveshaksutra-worker`)
    - **Managed PostgreSQL Database** (`anveshaksutra-db`)
-4. Click **"Apply"**. Once deployed, copy your backend URL (e.g., `https://anveshaksutra-backend.onrender.com`).
+4. Click **"Apply"**. Once deployed, copy your backend URL (e.g., `http://localhost:8000`).
 
 ---
 
@@ -36,7 +36,7 @@ For fast, free, and hassle-free deployment without managing VPS servers or Docke
 2. Select your repository `GuruMachanica/AnveshakSutra`.
 3. Set **Root Directory** to `frontend`.
 4. Add Environment Variable:
-   - `VITE_API_URL` = `https://anveshaksutra-backend.onrender.com/api/v1`
+   - `VITE_API_URL` = `http://localhost:8000/api/v1`
 5. Click **"Deploy"**. Vercel will build and deploy your React + Three.js + Anime.js web app!
 
 ---
